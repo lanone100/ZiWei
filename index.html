@@ -1,0 +1,122 @@
+<script>
+/**
+ * 紫微斗數核心引擎
+ */
+const ZiweiEngine = {
+    // 地支對照表
+    zhi: ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'],
+    // 十二宮位名稱
+    palaces: ['命宮', '兄弟', '夫妻', '子女', '財帛', '疾厄', '遷移', '僕役', '官祿', '田宅', '福德', '父母'],
+
+    // 1. 簡易農曆轉換 (示意邏輯，正式開發建議引用開源 Lunar 庫)
+    getLunarDate(dateStr) {
+        const d = new Date(dateStr);
+        // 這裡暫時回傳模擬農曆數據，實務需串接算法
+        return {
+            yearStem: '丙', // 天干
+            yearZhi: '午',  // 地支
+            month: 3,
+            day: 15,
+            hourZhi: '子'
+        };
+    },
+
+    // 2. 計算五行局 (決定大限起始)
+    // 邏輯：根據命宮所在位置與出生年干推算
+    getFiveElements(palaceZhi, yearStem) {
+        const map = { '木': 3, '火': 6, '土': 5, '金': 4, '水': 2 };
+        return map['水']; // 範例回傳水二局
+    },
+
+    // 3. 計算大限 (Decade)
+    // startAge: 五行局數, isForward: 陽男陰女順行(true)
+    calculateDecades(startAge, isForward) {
+        let decades = [];
+        for (let i = 0; i < 12; i++) {
+            let ageStart = startAge + (i * 10);
+            let ageEnd = ageStart + 9;
+            decades.push(`${ageStart}-${ageEnd}`);
+        }
+        return isForward ? decades : decades.reverse();
+    },
+
+    // 4. 定流年命宮 (Annual)
+    // 2026 丙午年，流年在「午」宮
+    getAnnualPalace(targetYear) {
+        const offset = (targetYear - 4) % 12; // 0 是子
+        return this.zhi[offset];
+    }
+};
+
+/**
+ * 畫面更新邏輯
+ */
+function runCalculation() {
+    const name = document.getElementById('userName').value;
+    const time = document.getElementById('birthTime').value;
+    const gender = document.getElementById('gender').value;
+
+    if (!time) return alert("請輸入出生日期");
+
+    const lunar = ZiweiEngine.getLunarDate(time);
+    const startAge = 2; // 假設水二局
+    const isForward = (lunar.yearStem === '丙' && gender === 'male'); // 陽男順行
+    
+    const decadeLabels = ZiweiEngine.calculateDecades(startAge, isForward);
+    const currentYear = new Date().getFullYear();
+    const annualZhi = ZiweiEngine.getAnnualPalace(currentYear);
+
+    // 渲染到 UI
+    updateUI(name, lunar, decadeLabels, annualZhi);
+}
+
+function updateUI(name, lunar, decades, annualZhi) {
+    // 更新中間資訊欄
+    const resultBox = document.getElementById('resultText');
+    resultBox.innerHTML = `
+        <div style="font-size:16px; color:var(--accent-color); font-weight:bold;">${name}</div>
+        <div style="font-size:12px;">農曆：${lunar.yearStem}${lunar.yearZhi}年 ${lunar.month}月${lunar.day}日</div>
+        <div style="margin-top:5px; padding:4px; background:#E5E5EA; border-radius:4px; font-size:10px;">
+            ${new Date().getFullYear()} 流年：${annualZhi}
+        </div>
+    `;
+
+    // 遍歷所有宮位，填入大限歲數
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach((cell, index) => {
+        // 清除舊的大限標籤
+        const oldTag = cell.querySelector('.decade-tag');
+        if (oldTag) oldTag.remove();
+
+        // 加入新的大限標籤 (Apple Style Tag)
+        const tag = document.createElement('div');
+        tag.className = 'decade-tag';
+        tag.style = "position:absolute; top:4px; right:4px; font-size:9px; color:#8E8E93;";
+        tag.innerText = decades[index] || '';
+        cell.appendChild(tag);
+
+        // 如果是流年宮位，加亮邊框
+        if (cell.querySelector('.ground-text').innerText === annualZhi) {
+            cell.style.border = "2px solid var(--accent-color)";
+            cell.style.boxShadow = "inset 0 0 10px rgba(0,122,255,0.1)";
+        } else {
+            cell.style.border = "1px solid var(--border-color)";
+        }
+    });
+
+    // 儲存資料到 LocalStorage
+    localStorage.setItem('ziwei_user_data', JSON.stringify({name, time, gender}));
+}
+</script>
+
+<style>
+    /* 補充大限標籤樣式 */
+    .decade-tag {
+        background: rgba(0,0,0,0.05);
+        padding: 1px 4px;
+        border-radius: 4px;
+    }
+    [data-theme="dark"] .decade-tag {
+        background: rgba(255,255,255,0.1);
+    }
+</style>
