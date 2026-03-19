@@ -1,920 +1,1204 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>紫微斗數 · 簡易命盤</title>
-    <style>
-        /* ----- RESET & 變數 ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>紫微斗數 · 命盤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-        /* 預設淺色模式 */
-        :root {
-            --bg-primary: #F5F5F7;
-            --bg-card: rgba(255, 255, 255, 0.8);
-            --bg-card-solid: #FFFFFF;
-            --text-primary: #1D1C1F;
-            --text-secondary: #6C6A70;
-            --accent-blue: #007AFF;
-            --accent-green: #34C759;
-            --accent-red: #FF3B30;
-            --accent-orange: #FF9500;
-            --accent-purple: #AF52DE;
-            --border-light: rgba(60, 60, 67, 0.08);
-            --shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
-            --glass-effect: blur(20px);
-            --cell-bg: rgba(255, 255, 255, 0.6);
-        }
+/* ===== CSS VARIABLES ===== */
+:root {
+  /* Light Mode */
+  --bg: #F2F1F6;
+  --bg2: #FFFFFF;
+  --bg3: rgba(255,255,255,0.72);
+  --surface: rgba(255,255,255,0.85);
+  --surface2: rgba(242,241,246,0.9);
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.04);
+  --text1: #1A1A2E;
+  --text2: #6E6E80;
+  --text3: #9898A8;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
+  --blur: blur(24px) saturate(180%);
 
-        /* 深色模式：直接透過 body 的 class 切換 */
-        body.dark-mode {
-            --bg-primary: #1C1C1E;
-            --bg-card: rgba(30, 30, 32, 0.8);
-            --bg-card-solid: #2C2C2E;
-            --text-primary: #F5F5F7;
-            --text-secondary: #98989E;
-            --accent-blue: #0A84FF;
-            --accent-green: #32D74B;
-            --accent-red: #FF453A;
-            --accent-orange: #FF9F0A;
-            --accent-purple: #BF5AF2;
-            --border-light: rgba(84, 84, 88, 0.2);
-            --shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            --cell-bg: rgba(40, 40, 42, 0.6);
-        }
+  /* Accent Palette */
+  --indigo: #5856D6;
+  --blue: #007AFF;
+  --cyan: #32ADE6;
+  --teal: #30B0C7;
+  --green: #34C759;
+  --yellow: #FFCC00;
+  --orange: #FF9500;
+  --pink: #FF2D55;
+  --red: #FF3B30;
+  --purple: #AF52DE;
+  --rose: #FF375F;
 
-        /* 基礎字體設定：使用 clamp 實現流體排版 */
-        html {
-            font-size: 16px;
-        }
+  /* Star colors */
+  --star-main: #FF3B30;
+  --star-minor: #1A1A2E;
+  --star-lucky: #007AFF;
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.4;
-            padding: 20px 16px 32px;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
+  /* Gradient */
+  --grad-header: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  --grad-accent: linear-gradient(135deg,#007AFF 0%,#5856D6 100%);
+  --grad-warm: linear-gradient(135deg,#FF9500 0%,#FF3B30 100%);
 
-        h1 {
-            font-size: clamp(1.8rem, 8vw, 2.8rem);
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+body.dark {
+  --bg: #0C0C14;
+  --bg2: #1C1C24;
+  --bg3: rgba(28,28,36,0.85);
+  --surface: rgba(36,36,48,0.9);
+  --surface2: rgba(48,48,64,0.8);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.04);
+  --text1: #F0F0FF;
+  --text2: #9898B8;
+  --text3: #6060808;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.2);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
+  --star-minor: #E8E8FF;
+  --indigo: #7877F0;
+  --blue: #0A84FF;
+  --green: #32D74B;
+  --orange: #FF9F0A;
+  --red: #FF453A;
+  --purple: #BF5AF2;
+  --pink: #FF375F;
+}
 
-        .theme-toggle {
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-effect);
-            border: 1px solid var(--border-light);
-            border-radius: 40px;
-            padding: 8px 18px;
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-            font-weight: 500;
-            color: var(--text-primary);
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.1s;
-            line-height: 1;
-        }
+/* ===== BASE ===== */
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.35s, color 0.35s;
+}
 
-        .card {
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-effect);
-            border: 1px solid var(--border-light);
-            border-radius: 28px;
-            padding: 20px 18px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
+/* ===== DECORATIVE BG ===== */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(88,86,214,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 80%, rgba(0,122,255,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 60% 30%, rgba(175,82,222,0.08) 0%, transparent 50%);
+}
+body.dark::before {
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(120,119,240,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 80%, rgba(10,132,255,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 60% 30%, rgba(191,90,242,0.12) 0%, transparent 50%);
+}
 
-        .card-title {
-            font-size: clamp(1.1rem, 4.5vw, 1.4rem);
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+/* ===== WRAPPER ===== */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
+/* ===== HEADER ===== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 12px;
+}
+.app-title-group { flex: 1; }
+.app-subtitle {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  margin-bottom: 4px;
+}
+.app-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(1.6rem, 7vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: var(--grad-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
 
-        .input-field {
-            width: 100%;
-        }
+/* Theme toggle */
+.theme-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s, background 0.3s;
+}
+.theme-btn:active { transform: scale(0.9); }
 
-        .input-field label {
-            font-size: clamp(0.7rem, 3vw, 0.9rem);
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            display: block;
-        }
+/* ===== CARD ===== */
+.card {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 22px 20px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 16px;
+  transition: background 0.35s, border-color 0.35s;
+}
+.card-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-label .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--grad-accent);
+  background: var(--indigo);
+  display: inline-block;
+}
 
-        .input-field input, .input-field select {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            font-size: clamp(0.9rem, 4vw, 1.1rem);
-            color: var(--text-primary);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
+/* ===== FORM ===== */
+.form-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field label { font-size: 0.72rem; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; }
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 13px 15px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: clamp(0.9rem, 4vw, 1rem);
+  color: var(--text1);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+}
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(88,86,214,0.15);
+}
 
-        .input-field input:focus, .input-field select:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
-        }
+/* Select arrow */
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: '›';
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  color: var(--text2);
+  font-size: 1.1rem;
+  pointer-events: none;
+}
 
-        .btn-primary {
-            background: linear-gradient(145deg, var(--accent-blue), #0051D5);
-            border: none;
-            border-radius: 24px;
-            padding: 16px 20px;
-            font-size: clamp(1rem, 5vw, 1.3rem);
-            font-weight: 600;
-            color: white;
-            width: 100%;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-            margin-top: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: opacity 0.1s;
-        }
+/* Datalist autocomplete hint */
+.hint-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.hint-chip {
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  color: var(--indigo);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+.hint-chip:active { background: var(--indigo); color: #fff; }
 
-        .btn-primary:active {
-            opacity: 0.8;
-        }
+/* ===== SUBMIT BTN ===== */
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--grad-accent);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(88,86,214,0.35);
+  margin-top: 14px;
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-submit::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%);
+}
+.btn-submit:active { opacity: 0.85; transform: scale(0.98); }
 
-        .tab-bar {
-            display: flex;
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-effect);
-            border-radius: 40px;
-            padding: 4px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-light);
-        }
+/* ===== TAB BAR ===== */
+.tab-bar {
+  display: flex;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 4px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 8px;
+  font-size: clamp(0.82rem, 3.8vw, 1rem);
+  font-weight: 600;
+  border-radius: 46px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  letter-spacing: 0.02em;
+}
+.tab.active {
+  background: var(--bg2);
+  color: var(--indigo);
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.02);
+}
 
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            font-size: clamp(0.85rem, 4vw, 1.1rem);
-            font-weight: 500;
-            border-radius: 36px;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
+/* ===== YEAR SELECTOR ===== */
+.year-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.year-bar.show { display: flex; }
+.year-bar label { font-size: 0.8rem; font-weight: 600; color: var(--text2); white-space: nowrap; }
+.year-bar select {
+  flex: 1;
+  padding: 9px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 30px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text1);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
 
-        .tab.active {
-            background: var(--bg-card-solid);
-            color: var(--accent-blue);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+/* ===== CHART GRID ===== */
+.chart-wrap {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 14px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+  position: relative;
+}
 
-        .year-selector {
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-effect);
-            border-radius: 30px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 7px;
+}
 
-        .year-selector label {
-            font-size: clamp(0.85rem, 3.5vw, 1rem);
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+/* Palace cells */
+.cell {
+  background: var(--bg3);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 5px 7px;
+  aspect-ratio: 1 / 1.12;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.cell::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  background: linear-gradient(180deg,rgba(255,255,255,0.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cell:active { transform: scale(0.96); }
+.cell.selected {
+  border-color: var(--indigo);
+  background: rgba(88,86,214,0.08);
+  box-shadow: 0 0 0 2px rgba(88,86,214,0.25), var(--shadow-sm);
+}
+.cell.annual-hi {
+  border-color: var(--orange);
+  background: rgba(255,149,0,0.08);
+  box-shadow: 0 0 0 2px rgba(255,149,0,0.25);
+}
 
-        .year-selector select {
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-light);
-            border-radius: 30px;
-            padding: 10px 20px;
-            font-size: clamp(0.9rem, 4vw, 1.1rem);
-            color: var(--text-primary);
-            outline: none;
-            cursor: pointer;
-            flex: 1;
-            min-width: 120px;
-        }
+/* Stars */
+.stars {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1px 3px;
+  padding: 0 2px;
+}
+.star {
+  writing-mode: vertical-rl;
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(0.62rem, 3vw, 0.9rem);
+  font-weight: 700;
+  transform: rotate(180deg);
+  color: var(--star-minor);
+  line-height: 1.15;
+  position: relative;
+}
+.star.main { color: var(--star-main); }
+.star.lucky { color: var(--blue); }
 
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 16px 0 8px;
-        }
+/* Hua tag on star */
+.hua-tag {
+  position: absolute;
+  top: -10px; right: -7px;
+  font-family: 'Noto Sans TC', sans-serif;
+  writing-mode: horizontal-tb;
+  transform: rotate(0deg);
+  font-size: 0.48rem;
+  font-weight: 800;
+  padding: 1px 3px;
+  border-radius: 4px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.hua-tag.lu { background: var(--green); color:#fff; }
+.hua-tag.quan { background: var(--blue); color:#fff; }
+.hua-tag.ke { background: var(--purple); color:#fff; }
+.hua-tag.ji { background: var(--red); color:#fff; }
 
-        .grid-cell {
-            background: var(--cell-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 12px 4px 8px;
-            aspect-ratio: 1 / 1.1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
+/* Palace name label */
+.palace-name {
+  font-size: clamp(0.6rem, 2.8vw, 0.82rem);
+  font-weight: 700;
+  background: var(--grad-accent);
+  color: #fff;
+  text-align: center;
+  border-radius: 30px;
+  padding: 3px 4px;
+  margin: 5px 4px 0;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-        .grid-cell:active {
-            background: var(--bg-card-solid);
-        }
+/* Branch (地支) */
+.branch {
+  position: absolute;
+  bottom: 4px; left: 6px;
+  font-size: clamp(0.48rem, 2.2vw, 0.68rem);
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 20px;
+  font-weight: 600;
+}
 
-        .grid-cell.highlight {
-            border: 3px solid var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
-        }
+/* Age tag */
+.age-tag {
+  position: absolute;
+  top: 5px; right: 5px;
+  font-size: clamp(0.44rem, 2vw, 0.62rem);
+  font-weight: 700;
+  background: var(--grad-warm);
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 20px;
+  cursor: pointer;
+  line-height: 1.3;
+  white-space: nowrap;
+}
 
-        .star-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px 4px;
-            justify-content: center;
-        }
+/* ===== CENTER CELL ===== */
+.center {
+  grid-column: 2/4;
+  grid-row: 2/4;
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1.5px dashed rgba(88,86,214,0.4);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px 8px;
+  box-shadow: inset 0 0 0 1px var(--border2);
+  aspect-ratio: auto;
+}
+.center-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(1.1rem, 6vw, 1.9rem);
+  font-weight: 900;
+  background: var(--grad-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  word-break: break-all;
+}
+.center-detail {
+  font-size: clamp(0.68rem, 3.2vw, 0.88rem);
+  color: var(--text2);
+  margin-top: 6px;
+  font-weight: 500;
+}
+.center-badges {
+  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;
+  margin-top: 8px;
+}
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+  letter-spacing: 0.04em;
+}
+.badge-indigo { color: var(--indigo); border-color: rgba(88,86,214,0.35); background: rgba(88,86,214,0.08); }
+.badge-orange { color: var(--orange); border-color: rgba(255,149,0,0.35); background: rgba(255,149,0,0.08); }
+.badge-green  { color: var(--green);  border-color: rgba(52,199,89,0.35);  background: rgba(52,199,89,0.08); }
 
-        .star {
-            writing-mode: vertical-rl;
-            font-size: clamp(0.65rem, 3.2vw, 1rem);
-            font-weight: 700;
-            color: var(--text-primary);
-            transform: rotate(180deg);
-            position: relative;
-            line-height: 1.2;
-        }
+/* ===== EXPLAIN BOX ===== */
+.explain-card {
+  background: var(--surface);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s;
+}
+.explain-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.explain-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--grad-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(88,86,214,0.3);
+}
+.explain-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(1rem, 5vw, 1.3rem);
+  font-weight: 700;
+  color: var(--text1);
+  line-height: 1.3;
+}
+.explain-sub {
+  font-size: 0.78rem;
+  color: var(--text2);
+  margin-top: 2px;
+  font-weight: 500;
+}
+.explain-text {
+  font-size: clamp(0.85rem, 3.8vw, 1rem);
+  line-height: 1.7;
+  color: var(--text1);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
 
-        .star.main-red {
-            color: var(--accent-red);
-        }
+/* ===== FORMULA SECTION ===== */
+.formula-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.formula-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 15px;
+  transition: background 0.3s;
+}
+.formula-item .f-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.formula-item .f-value {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--indigo);
+  line-height: 1.2;
+}
+.formula-item .f-unit {
+  font-size: 0.75rem;
+  color: var(--text2);
+  margin-left: 3px;
+  font-weight: 400;
+}
 
-        .sh-tag {
-            writing-mode: horizontal-tb;
-            position: absolute;
-            top: -12px;
-            right: -8px;
-            background: var(--accent-green);
-            color: white;
-            font-size: clamp(0.45rem, 2.2vw, 0.7rem);
-            padding: 2px 4px;
-            border-radius: 20px;
-            font-weight: 800;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
+/* SiHua display */
+.sihua-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 15px;
+}
+.sihua-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text2);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.sihua-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.sihua-chip {
+  font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-family: 'Noto Serif TC', serif;
+  letter-spacing: 0.03em;
+}
+.chip-lu   { background: rgba(52,199,89,0.15);  color: var(--green);  border: 1px solid rgba(52,199,89,0.3); }
+.chip-quan { background: rgba(0,122,255,0.12);   color: var(--blue);   border: 1px solid rgba(0,122,255,0.25); }
+.chip-ke   { background: rgba(175,82,222,0.12);  color: var(--purple); border: 1px solid rgba(175,82,222,0.25); }
+.chip-ji   { background: rgba(255,59,48,0.12);   color: var(--red);    border: 1px solid rgba(255,59,48,0.25); }
 
-        .sh-tag.ji {
-            background: var(--accent-red);
-        }
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text3);
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  line-height: 1.7;
+}
 
-        .palace-name {
-            font-size: clamp(0.6rem, 3vw, 0.9rem);
-            background: var(--accent-blue);
-            color: white;
-            padding: 4px 0;
-            border-radius: 30px;
-            text-align: center;
-            margin: 6px 6px 0;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.card, .chart-wrap, .explain-card, .tab-bar {
+  animation: fadeIn 0.4s ease both;
+}
 
-        .branch-tag {
-            position: absolute;
-            bottom: 4px;
-            left: 8px;
-            font-size: clamp(0.5rem, 2.5vw, 0.75rem);
-            color: var(--text-secondary);
-            background: rgba(128,128,128,0.15);
-            padding: 2px 6px;
-            border-radius: 20px;
-            backdrop-filter: blur(2px);
-        }
-
-        .age-tag {
-            position: absolute;
-            top: 4px;
-            right: 8px;
-            font-size: clamp(0.5rem, 2.5vw, 0.75rem);
-            background: var(--accent-orange);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .center-cell {
-            grid-column: 2 / 4;
-            grid-row: 2 / 4;
-            background: var(--bg-card);
-            backdrop-filter: var(--glass-effect);
-            border-radius: 28px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed var(--accent-blue);
-            box-shadow: inset 0 0 0 1px var(--border-light);
-            padding: 16px;
-            text-align: center;
-        }
-
-        .center-cell .name {
-            font-size: clamp(1.2rem, 7vw, 2.5rem);
-            font-weight: 700;
-            color: var(--accent-blue);
-            line-height: 1.2;
-            word-break: break-word;
-        }
-
-        .center-cell .detail {
-            font-size: clamp(0.8rem, 4vw, 1.2rem);
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .explain-box {
-            background: linear-gradient(145deg, var(--bg-card), var(--bg-card-solid));
-            border-radius: 32px;
-            padding: 20px;
-            margin: 16px 0 20px;
-            border: 1px solid var(--border-light);
-        }
-
-        .explain-title {
-            font-size: clamp(1.1rem, 5vw, 1.5rem);
-            font-weight: 700;
-            color: var(--accent-blue);
-            margin-bottom: 4px;
-        }
-
-        .explain-sub {
-            font-size: clamp(0.85rem, 3.5vw, 1.1rem);
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed var(--border-light);
-        }
-
-        .explain-text {
-            font-size: clamp(0.9rem, 4vw, 1.2rem);
-            line-height: 1.5;
-            color: var(--text-primary);
-        }
-
-        .formula-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .formula-item {
-            background: var(--bg-card-solid);
-            border-radius: 22px;
-            padding: 14px 16px;
-            flex: 1 1 calc(50% - 12px);
-            min-width: 130px;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow);
-        }
-
-        .formula-item .label {
-            font-size: clamp(0.7rem, 3vw, 0.9rem);
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .formula-item .value {
-            font-size: clamp(1.2rem, 5vw, 1.8rem);
-            font-weight: 700;
-            color: var(--accent-blue);
-        }
-
-        .formula-item .unit {
-            font-size: clamp(0.8rem, 3.5vw, 1.1rem);
-            color: var(--text-secondary);
-            margin-left: 4px;
-        }
-
-        .footnote {
-            font-size: clamp(0.7rem, 3vw, 0.9rem);
-            color: var(--text-secondary);
-            margin-top: 20px;
-            text-align: center;
-            border-top: 1px solid var(--border-light);
-            padding-top: 16px;
-        }
-
-        @media (max-width: 380px) {
-            .grid-cell {
-                padding: 8px 2px;
-            }
-        }
-    </style>
+/* ===== RESPONSIVE ===== */
+@media (max-width: 360px) {
+  .cell { padding: 6px 3px 5px; }
+  .stars { gap: 0 2px; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-forced) { /* let JS handle it */ }
+}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>紫微斗數 · 簡易命盤</h1>
-        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
-            <span id="themeIcon">🌙</span>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="app-title-group">
+      <div class="app-subtitle">紫微命理 · 命盤系統</div>
+      <div class="app-title">紫微斗數</div>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="切換主題">🌙</button>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <div class="card-label"><span class="dot"></span>填入出生資料</div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>姓名</label>
+        <input type="text" id="userName" placeholder="陳致遠" autocomplete="name" list="name-history">
+        <datalist id="name-history"></datalist>
+        <div class="hint-chips" id="nameHints"></div>
+      </div>
+      <div class="form-field">
+        <label>性別</label>
+        <div class="select-wrap">
+          <select id="userGender">
+            <option value="male">乾造 男</option>
+            <option value="female">坤造 女</option>
+          </select>
         </div>
+      </div>
     </div>
-
-    <!-- 輸入卡片 -->
-    <div class="card">
-        <div class="card-title"><span>📋 填入出生資料</span></div>
-        <div class="form-grid">
-            <div class="input-field">
-                <label>姓名</label>
-                <input type="text" id="userName" placeholder="例如 陳致遠" value="陳致遠" oninput="updateCenterName(this.value)">
-            </div>
-            <div class="input-field">
-                <label>性別</label>
-                <select id="userGender">
-                    <option value="male">乾造 男</option>
-                    <option value="female">坤造 女</option>
-                </select>
-            </div>
-        </div>
-        <div class="input-field">
-            <label>出生時間 (公曆)</label>
-            <input type="datetime-local" id="userBirth" value="1990-06-15T10:30">
-        </div>
-        <button class="btn-primary" onclick="updateChart()">✨ 更新命盤 & 記憶</button>
+    <div class="form-field">
+      <label>出生時間（公曆）</label>
+      <input type="datetime-local" id="userBirth">
     </div>
+    <button class="btn-submit" onclick="submitChart()">✦ 更新命盤 &amp; 記憶</button>
+  </div>
 
-    <!-- 分頁 -->
-    <div class="tab-bar">
-        <div class="tab active" onclick="switchTab(this, 'base')">本命盤</div>
-        <div class="tab" onclick="switchTab(this, 'decade')">大限</div>
-        <div class="tab" onclick="switchTab(this, 'annual')">流年</div>
-    </div>
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <div class="tab active" data-mode="base" onclick="switchTab(this)">本命盤</div>
+    <div class="tab" data-mode="decade" onclick="switchTab(this)">大限盤</div>
+    <div class="tab" data-mode="annual" onclick="switchTab(this)">流年盤</div>
+  </div>
 
-    <!-- 年份選擇器 (流年專用) -->
-    <div class="year-selector" id="yearSelector" style="display: none;">
-        <label for="annualYear">📅 選擇流年年份：</label>
-        <select id="annualYear" onchange="onAnnualYearChange()">
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-            <option value="2028">2028</option>
-            <option value="2029">2029</option>
-            <option value="2030">2030</option>
-        </select>
-    </div>
+  <!-- YEAR SELECTOR -->
+  <div class="year-bar" id="yearBar">
+    <label>📅 流年年份：</label>
+    <select id="annualYear" onchange="applyAnnual()"></select>
+  </div>
 
-    <!-- 命盤 4x4 網格 -->
+  <!-- CHART 4×4 -->
+  <div class="chart-wrap">
     <div class="chart-grid" id="chartGrid">
-        <!-- 巳 -->
-        <div class="grid-cell" data-palace="父母" data-zhi="巳">
-            <div class="star-list"><span class="star">太陽</span><span class="star main-red">巨門</span></div>
-            <div class="palace-name">父母</div>
-            <span class="branch-tag">巳</span>
-            <span class="age-tag" data-age="2-11">2-11</span>
+      <!-- Row 1: 巳 午 未 申 -->
+      <div class="cell" data-palace="父母" data-zhi="巳">
+        <div class="stars">
+          <span class="star lucky">太陽</span>
+          <span class="star main">巨門</span>
         </div>
-        <!-- 午 -->
-        <div class="grid-cell" data-palace="福德" data-zhi="午">
-            <div class="star-list"><span class="star main-red">天同</span><span class="star">太陰</span></div>
-            <div class="palace-name">福德</div>
-            <span class="branch-tag">午</span>
-            <span class="age-tag" data-age="12-21">12-21</span>
+        <div class="palace-name">父母</div>
+        <span class="branch">巳</span>
+        <span class="age-tag">2–11</span>
+      </div>
+      <div class="cell" data-palace="福德" data-zhi="午">
+        <div class="stars">
+          <span class="star main">天同</span>
+          <span class="star lucky">太陰</span>
         </div>
-        <!-- 未 -->
-        <div class="grid-cell" data-palace="田宅" data-zhi="未">
-            <div class="star-list"><span class="star">武曲</span><span class="star">貪狼</span></div>
-            <div class="palace-name">田宅</div>
-            <span class="branch-tag">未</span>
-            <span class="age-tag" data-age="22-31">22-31</span>
+        <div class="palace-name">福德</div>
+        <span class="branch">午</span>
+        <span class="age-tag">12–21</span>
+      </div>
+      <div class="cell" data-palace="田宅" data-zhi="未">
+        <div class="stars">
+          <span class="star lucky">武曲</span>
+          <span class="star">貪狼</span>
         </div>
-        <!-- 申 -->
-        <div class="grid-cell" data-palace="官祿" data-zhi="申">
-            <div class="star-list"><span class="star">太陽</span></div>
-            <div class="palace-name">官祿</div>
-            <span class="branch-tag">申</span>
-            <span class="age-tag" data-age="32-41">32-41</span>
+        <div class="palace-name">田宅</div>
+        <span class="branch">未</span>
+        <span class="age-tag">22–31</span>
+      </div>
+      <div class="cell" data-palace="官祿" data-zhi="申">
+        <div class="stars">
+          <span class="star lucky">太陽</span>
         </div>
-        <!-- 酉 -->
-        <div class="grid-cell" data-palace="僕役" data-zhi="酉">
-            <div class="star-list"><span class="star main-red">天機</span><span class="star">天梁</span></div>
-            <div class="palace-name">僕役</div>
-            <span class="branch-tag">酉</span>
-            <span class="age-tag" data-age="42-51">42-51</span>
-        </div>
-        <!-- 戌 -->
-        <div class="grid-cell" data-palace="遷移" data-zhi="戌">
-            <div class="star-list"><span class="star main-red">紫微</span><span class="star">七殺</span></div>
-            <div class="palace-name">遷移</div>
-            <span class="branch-tag">戌</span>
-            <span class="age-tag" data-age="52-61">52-61</span>
-        </div>
-        <!-- 亥 -->
-        <div class="grid-cell" data-palace="疾厄" data-zhi="亥">
-            <div class="star-list"><span class="star main-red">廉貞</span><span class="star">破軍</span></div>
-            <div class="palace-name">疾厄</div>
-            <span class="branch-tag">亥</span>
-            <span class="age-tag" data-age="62-71">62-71</span>
-        </div>
-        <!-- 子 -->
-        <div class="grid-cell" data-palace="財帛" data-zhi="子">
-            <div class="star-list"><span class="star">天府</span></div>
-            <div class="palace-name">財帛</div>
-            <span class="branch-tag">子</span>
-            <span class="age-tag" data-age="72-81">72-81</span>
-        </div>
-        <!-- 丑 -->
-        <div class="grid-cell" data-palace="子女" data-zhi="丑">
-            <div class="star-list"><span class="star">太陰</span></div>
-            <div class="palace-name">子女</div>
-            <span class="branch-tag">丑</span>
-            <span class="age-tag" data-age="82-91">82-91</span>
-        </div>
-        <!-- 寅 -->
-        <div class="grid-cell" data-palace="夫妻" data-zhi="寅">
-            <div class="star-list"><span class="star">天梁</span></div>
-            <div class="palace-name">夫妻</div>
-            <span class="branch-tag">寅</span>
-            <span class="age-tag" data-age="92-101">92-101</span>
-        </div>
-        <!-- 卯 -->
-        <div class="grid-cell" data-palace="兄弟" data-zhi="卯">
-            <div class="star-list"><span class="star main-red">天同</span></div>
-            <div class="palace-name">兄弟</div>
-            <span class="branch-tag">卯</span>
-            <span class="age-tag" data-age="102-111">102-111</span>
-        </div>
-        <!-- 辰 -->
-        <div class="grid-cell" data-palace="命宮" data-zhi="辰">
-            <div class="star-list"><span class="star main-red">紫微</span><span class="star">天相</span></div>
-            <div class="palace-name">命宮</div>
-            <span class="branch-tag">辰</span>
-            <span class="age-tag" data-age="112-121">112-121</span>
-        </div>
+        <div class="palace-name">官祿</div>
+        <span class="branch">申</span>
+        <span class="age-tag">32–41</span>
+      </div>
 
-        <!-- 中央資訊區塊 -->
-        <div class="center-cell" id="centerInfo">
-            <div class="name" id="centerName">陳致遠</div>
-            <div class="detail" id="centerDetail">水二局 · 陽男</div>
-        </div>
+      <!-- Row 2: 辰 [CENTER] 酉 -->
+      <div class="cell" data-palace="田宅2" data-zhi="辰" style="display:none"></div><!-- placeholder to keep grid -->
+      <!-- Actually the grid layout is: row1=巳午未申, row2=辰,center(2col),酉, row3=卯,center(2col),戌, row4=寅丑子亥 -->
+      <!-- We'll use CSS grid-area approach below in JS-built grid -->
     </div>
+  </div>
 
-    <!-- 解說卡片 -->
-    <div class="explain-box" id="explainBox">
-        <div class="explain-title" id="explainTitle">🔮 點擊十二宮或年齡數字</div>
-        <div class="explain-sub" id="explainSub">獲得即時解說</div>
-        <div class="explain-text" id="explainText">
-            點擊任一宮位或年齡標籤，會顯示對應的紫微斗數解釋。切換「流年」分頁並選擇年份，可看到該年四化及流年命宮高亮。
-        </div>
+  <!-- EXPLAIN CARD -->
+  <div class="explain-card" id="explainCard">
+    <div class="explain-header">
+      <div class="explain-icon" id="explainIcon">🔮</div>
+      <div>
+        <div class="explain-title" id="explainTitle">點擊宮位取得解說</div>
+        <div class="explain-sub" id="explainSub">請點選命盤中任一宮位或大限年齡</div>
+      </div>
     </div>
-
-    <!-- 簡易公式與計算結果 -->
-    <div class="card">
-        <div class="card-title"><span>🧮 命理公式 · 快速運算</span></div>
-        <div class="formula-grid">
-            <div class="formula-item">
-                <div class="label"><span>⚖️ 五行局</span></div>
-                <div class="value" id="formulaElement">水二局</div>
-            </div>
-            <div class="formula-item">
-                <div class="label"><span>📅 起運歲數</span></div>
-                <div class="value" id="formulaStartAge">2 <span class="unit">歲</span></div>
-            </div>
-            <div class="formula-item">
-                <div class="label"><span>🔮 命主</span></div>
-                <div class="value" id="formulaMaster">祿存</div>
-            </div>
-            <div class="formula-item">
-                <div class="label"><span>✨ 身主</span></div>
-                <div class="value" id="formulaBody">天梁</div>
-            </div>
-        </div>
-        <div style="margin-top: 16px; font-size: 15px; background: var(--bg-card-solid); border-radius: 22px; padding: 16px;">
-            <div style="font-weight:600; margin-bottom:6px;">📐 四化公式 (依流年天干)</div>
-            <div style="display: flex; gap: 16px; flex-wrap: wrap;" id="siHuaDisplay">
-                <span>天同祿</span> <span>天機權</span> <span>文昌科</span> <span style="color: var(--accent-red);">廉貞忌</span>
-            </div>
-        </div>
+    <div class="explain-text" id="explainText">
+      紫微斗數為東方命理之精華，以出生年月日時起十二宮，配以星曜落宮論吉凶。
+      切換「大限盤」可查看人生各階段運勢；「流年盤」可查看當年四化引動。
     </div>
+  </div>
 
-    <div class="footnote">
-        ⚡ 資料自動儲存於瀏覽器 · 重啟後無需重新輸入
+  <!-- FORMULA CARD -->
+  <div class="card">
+    <div class="card-label"><span class="dot"></span>命理公式 · 快速運算</div>
+    <div class="formula-grid">
+      <div class="formula-item">
+        <div class="f-label">⚖️ 五行局</div>
+        <div class="f-value" id="fElement">水二局</div>
+      </div>
+      <div class="formula-item">
+        <div class="f-label">📅 起運歲數</div>
+        <div class="f-value" id="fStartAge">2<span class="f-unit">歲</span></div>
+      </div>
+      <div class="formula-item">
+        <div class="f-label">🔮 命主星</div>
+        <div class="f-value" id="fMaster">祿存</div>
+      </div>
+      <div class="formula-item">
+        <div class="f-label">✦ 身主星</div>
+        <div class="f-value" id="fBody">天梁</div>
+      </div>
     </div>
+    <div class="sihua-box">
+      <div class="sihua-title">四化 · <span id="sihuaYear">丙年</span></div>
+      <div class="sihua-chips" id="sihuaChips"></div>
+    </div>
+  </div>
 
-    <script>
-        (function() {
-            // ---------- 四化字典 (依天干) ----------
-            const huaMap = {
-                '甲': { '廉貞': '祿', '破軍': '權', '武曲': '科', '太陽': '忌' },
-                '乙': { '天機': '祿', '天梁': '權', '紫微': '科', '太陰': '忌' },
-                '丙': { '天同': '祿', '天機': '權', '文昌': '科', '廉貞': '忌' },
-                '丁': { '太陰': '祿', '天同': '權', '天機': '科', '巨門': '忌' },
-                '戊': { '貪狼': '祿', '太陰': '權', '右弼': '科', '天機': '忌' },
-                '己': { '武曲': '祿', '貪狼': '權', '天梁': '科', '文曲': '忌' },
-                '庚': { '太陽': '祿', '武曲': '權', '太陰': '科', '天同': '忌' },
-                '辛': { '巨門': '祿', '太陽': '權', '文曲': '科', '文昌': '忌' },
-                '壬': { '天梁': '祿', '紫微': '權', '左輔': '科', '武曲': '忌' },
-                '癸': { '破軍': '祿', '巨門': '權', '太陰': '科', '貪狼': '忌' }
-            };
+  <div class="footer">
+    ⚡ 資料自動儲存於瀏覽器 · 下次開啟免重新輸入<br>
+    <span style="color:var(--text3);font-size:0.65rem;">本命盤為示意版，星曜配置已預設，僅供參考學習</span>
+  </div>
 
-            // 給定年份，回傳天干地支字串 (簡易計算)
-            function getYearGanZhi(year) {
-                const gan = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
-                const zhi = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-                const idxGan = (year - 4) % 10;
-                const idxZhi = (year - 4) % 12;
-                return { gan: gan[idxGan], zhi: zhi[idxZhi] };
-            }
+</div><!-- /wrapper -->
 
-            // 取得某年的四化物件
-            function getSiHuaForYear(year) {
-                const { gan } = getYearGanZhi(year);
-                return huaMap[gan] || huaMap['丙'];
-            }
+<script>
+(function(){
+'use strict';
 
-            // ---------- 宮位解說 ----------
-            const palaceDesc = {
-                '命宮': '命宮代表先天格局與個性。紫微+天相，領導力強且輔佐能力佳，處事穩重。',
-                '兄弟': '兄弟宮看手足緣。天同主和諧，兄弟感情融洽但可能依賴。',
-                '夫妻': '夫妻宮論感情模式。天梁蔭星，配偶可能年長或具包容力。',
-                '子女': '子女宮主晚輩。太陰內斂，子女溫柔，需耐心教養。',
-                '財帛': '財帛宮看理財。天府為庫星，守財穩健，財源穩定。',
-                '疾厄': '疾厄宮對應健康。廉貞+破軍，體質變化大，注意意外血光。',
-                '遷移': '遷移宮主外出運。紫微七殺，遠行發展易掌權，動中得貴。',
-                '僕役': '交友宮看朋友。天機天梁機智，但多思，交友宜慎選。',
-                '官祿': '官祿宮主事業。太陽發散，適合公職、教育、能源相關。',
-                '田宅': '田宅宮論家產。武曲貪狼，房產投資機會多，但防投機。',
-                '福德': '福德宮主精神。天同太陰，福澤深厚，愛好文藝。',
-                '父母': '父母宮看雙親。太陽巨門，父母健談，早年需溝通。',
-                'default': '此宮位星曜交織，需綜合參看三方四正。'
-            };
+// ===== DATA =====
+const HUA_MAP = {
+  '甲':{'廉貞':'祿','破軍':'權','武曲':'科','太陽':'忌'},
+  '乙':{'天機':'祿','天梁':'權','紫微':'科','太陰':'忌'},
+  '丙':{'天同':'祿','天機':'權','文昌':'科','廉貞':'忌'},
+  '丁':{'太陰':'祿','天同':'權','天機':'科','巨門':'忌'},
+  '戊':{'貪狼':'祿','太陰':'權','右弼':'科','天機':'忌'},
+  '己':{'武曲':'祿','貪狼':'權','天梁':'科','文曲':'忌'},
+  '庚':{'太陽':'祿','武曲':'權','太陰':'科','天同':'忌'},
+  '辛':{'巨門':'祿','太陽':'權','文曲':'科','文昌':'忌'},
+  '壬':{'天梁':'祿','紫微':'權','左輔':'科','武曲':'忌'},
+  '癸':{'破軍':'祿','巨門':'權','太陰':'科','貪狼':'忌'}
+};
+const GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
 
-            function ageExplanation(palace, ageRange, stars) {
-                return `【${ageRange}歲大限】行至${palace}宮，主星：${stars}。此十年運勢重點在${palace}相關事務。`;
-            }
+const PALACE_DESC = {
+  '命宮':'命宮代表先天個性與格局。紫微＋天相同守，領導力強、行事穩重、具輔佐大局之能，人生主軸清晰。',
+  '兄弟':'兄弟宮論手足與同輩緣分。天同主和諧，與兄弟感情融洽，但需防依賴性過強。',
+  '夫妻':'夫妻宮看感情模式與配偶特質。天梁為蔭星，配偶可能年長或具包容力，感情中以穩定為重。',
+  '子女':'子女宮論晚輩緣。太陰性柔，子女個性溫和內斂，教養上需多給予耐心與情感陪伴。',
+  '財帛':'財帛宮主財運與理財模式。天府為庫星，守財能力佳，財源穩定，適合穩健理財策略。',
+  '疾厄':'疾厄宮對應身體健康。廉貞＋破軍，體質變化較大，需留意意外、手術及血光之災。',
+  '遷移':'遷移宮主外出與環境轉換。紫微＋七殺，適合異地發展，遠行易得貴人相助或掌權機會。',
+  '僕役':'交友宮看朋友與部屬緣。天機＋天梁，交友智慧兼備，但多思慮，宜慎選合作對象。',
+  '官祿':'官祿宮主事業與工作。太陽光明發散，適合公職、教育、能源或高能見度的職場環境。',
+  '田宅':'田宅宮論家產與居住。武曲＋貪狼，房產投資機會多，但需防衝動投機造成損失。',
+  '福德':'福德宮主精神狀態與享受。天同＋太陰，福澤深厚，喜愛文藝，精神生活豐富細膩。',
+  '父母':'父母宮看雙親緣與長輩關係。太陽＋巨門，父母健談積極，早年家庭溝通需多加用心。'
+};
 
-            // 儲存/載入
-            function loadFromStorage() {
-                const saved = localStorage.getItem('ziwei_memo');
-                return saved ? JSON.parse(saved) : null;
-            }
-            function saveToStorage(data) {
-                localStorage.setItem('ziwei_memo', JSON.stringify(data));
-            }
+const PALACE_ICONS = {
+  '命宮':'⭐','兄弟':'👥','夫妻':'💑','子女':'👶',
+  '財帛':'💰','疾厄':'🏥','遷移':'✈️','僕役':'🤝',
+  '官祿':'💼','田宅':'🏠','福德':'🎭','父母':'👨‍👩‍👦'
+};
 
-            // 更新中央資訊
-            function updateCenterInfo(name, extra) {
-                document.getElementById('centerName').innerText = name;
-                document.getElementById('centerDetail').innerText = extra;
-            }
+// Palace layout: 12 cells in order (clockwise from top-left row)
+// Positions in 4×4 grid (0-indexed, row,col): skip center (rows 1-2, cols 1-2)
+// Order: 巳(r0c0)午(r0c1)未(r0c2)申(r0c3) 酉(r1c3)戌(r2c3) 亥(r3c3)子(r3c2)丑(r3c1)寅(r3c0) 卯(r2c0)辰(r1c0)
+const PALACES = [
+  {name:'父母',zhi:'巳',stars:[{n:'太陽',t:'lucky'},{n:'巨門',t:'main'}],age:'2–11',   r:0,c:0},
+  {name:'福德',zhi:'午',stars:[{n:'天同',t:'main'},{n:'太陰',t:'lucky'}],age:'12–21',  r:0,c:1},
+  {name:'田宅',zhi:'未',stars:[{n:'武曲',t:'lucky'},{n:'貪狼',t:''}],age:'22–31',     r:0,c:2},
+  {name:'官祿',zhi:'申',stars:[{n:'太陽',t:'lucky'}],age:'32–41',                     r:0,c:3},
+  {name:'僕役',zhi:'酉',stars:[{n:'天機',t:'main'},{n:'天梁',t:''}],age:'42–51',      r:1,c:3},
+  {name:'遷移',zhi:'戌',stars:[{n:'紫微',t:'main'},{n:'七殺',t:''}],age:'52–61',      r:2,c:3},
+  {name:'疾厄',zhi:'亥',stars:[{n:'廉貞',t:'main'},{n:'破軍',t:''}],age:'62–71',      r:3,c:3},
+  {name:'財帛',zhi:'子',stars:[{n:'天府',t:'lucky'}],age:'72–81',                     r:3,c:2},
+  {name:'子女',zhi:'丑',stars:[{n:'太陰',t:''}],age:'82–91',                          r:3,c:1},
+  {name:'夫妻',zhi:'寅',stars:[{n:'天梁',t:''}],age:'92–101',                         r:3,c:0},
+  {name:'兄弟',zhi:'卯',stars:[{n:'天同',t:'main'}],age:'102–111',                    r:2,c:0},
+  {name:'命宮',zhi:'辰',stars:[{n:'紫微',t:'main'},{n:'天相',t:''}],age:'112–121',    r:1,c:0}
+];
 
-            // 即時更新中央人名 (由 oninput 觸發)
-            window.updateCenterName = function(name) {
-                if (name.trim() === '') name = '命造';
-                document.getElementById('centerName').innerText = name;
-                // 注意：不儲存，避免頻繁寫入，等點擊按鈕再完整儲存
-            };
+// ===== GRID BUILD =====
+function buildGrid(){
+  const grid = document.getElementById('chartGrid');
+  grid.innerHTML='';
+  // Set explicit grid template
+  grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:7px;';
 
-            // 設定公式值
-            function setFormulaValues(gender) {
-                const el = document.getElementById('formulaElement');
-                const start = document.getElementById('formulaStartAge');
-                const master = document.getElementById('formulaMaster');
-                const body = document.getElementById('formulaBody');
-                if (gender === 'male') {
-                    el.innerText = '水二局';
-                    start.innerHTML = '2 <span class="unit">歲</span>';
-                    master.innerText = '祿存';
-                    body.innerText = '天梁';
-                } else {
-                    el.innerText = '木三局';
-                    start.innerHTML = '3 <span class="unit">歲</span>';
-                    master.innerText = '廉貞';
-                    body.innerText = '天同';
-                }
-            }
+  PALACES.forEach(p=>{
+    const cell = document.createElement('div');
+    cell.className='cell';
+    cell.dataset.palace=p.name;
+    cell.dataset.zhi=p.zhi;
+    cell.style.gridRow=`${p.r+1}`;
+    cell.style.gridColumn=`${p.c+1}`;
 
-            // 更新四化顯示文字
-            function updateSiHuaDisplay(year) {
-                const hua = getSiHuaForYear(year);
-                const displayDiv = document.getElementById('siHuaDisplay');
-                let html = '';
-                for (let [star, huaChar] of Object.entries(hua)) {
-                    const color = (huaChar === '忌') ? 'var(--accent-red)' : 'inherit';
-                    html += `<span style="color: ${color};">${star}${huaChar}</span> `;
-                }
-                displayDiv.innerHTML = html;
-            }
+    // Stars
+    const starsDiv=document.createElement('div');
+    starsDiv.className='stars';
+    p.stars.forEach(s=>{
+      const span=document.createElement('span');
+      span.className='star '+(s.t||'');
+      span.textContent=s.n;
+      span.dataset.starname=s.n;
+      starsDiv.appendChild(span);
+    });
+    cell.appendChild(starsDiv);
 
-            // 點擊事件
-            function bindClicks() {
-                document.querySelectorAll('.grid-cell[data-palace]').forEach(cell => {
-                    cell.removeEventListener('click', cellClickHandler);
-                    cell.addEventListener('click', cellClickHandler);
-                });
-                document.querySelectorAll('.age-tag').forEach(tag => {
-                    tag.removeEventListener('click', ageClickHandler);
-                    tag.addEventListener('click', ageClickHandler);
-                });
-            }
+    // Palace name
+    const pn=document.createElement('div');
+    pn.className='palace-name';
+    pn.textContent=p.name;
+    cell.appendChild(pn);
 
-            function cellClickHandler(e) {
-                const cell = e.currentTarget;
-                const palace = cell.dataset.palace;
-                const stars = Array.from(cell.querySelectorAll('.star')).map(s => s.innerText.trim()).join('、');
-                const zhi = cell.querySelector('.branch-tag')?.innerText || '';
-                const age = cell.querySelector('.age-tag')?.innerText || '';
-                let explanation = palaceDesc[palace] || palaceDesc['default'];
-                const huaTags = cell.querySelectorAll('.sh-tag');
-                if (huaTags.length) {
-                    const hua = Array.from(huaTags).map(t => t.innerText).join('');
-                    explanation += ` [四化：${hua}] 流年引動吉凶加重。`;
-                }
-                document.getElementById('explainTitle').innerText = `🏯 ${palace} 宮 (${zhi})`;
-                document.getElementById('explainSub').innerHTML = `⭐ ${stars || '無主星'}  ${age ? '大限 '+age : ''}`;
-                document.getElementById('explainText').innerText = explanation;
-                cell.style.background = 'rgba(0,122,255,0.15)';
-                setTimeout(() => cell.style.background = '', 200);
-            }
+    // Branch
+    const br=document.createElement('span');
+    br.className='branch';
+    br.textContent=p.zhi;
+    cell.appendChild(br);
 
-            function ageClickHandler(e) {
-                e.stopPropagation();
-                const tag = e.currentTarget;
-                const cell = tag.closest('.grid-cell');
-                if (!cell) return;
-                const palace = cell.dataset.palace;
-                const stars = Array.from(cell.querySelectorAll('.star')).map(s => s.innerText.trim()).join('、');
-                const ageRange = tag.innerText;
-                const explanation = ageExplanation(palace, ageRange, stars);
-                document.getElementById('explainTitle').innerText = `⏳ 大限 ${ageRange} (${palace}宮)`;
-                document.getElementById('explainSub').innerHTML = `⭐ 主星：${stars || '無'}`;
-                document.getElementById('explainText').innerText = explanation;
-                tag.style.background = 'var(--accent-blue)';
-                setTimeout(() => tag.style.background = '', 200);
-            }
+    // Age tag
+    const ag=document.createElement('span');
+    ag.className='age-tag';
+    ag.textContent=p.age;
+    ag.addEventListener('click',e=>{e.stopPropagation();onAgeClick(p,ag);});
+    cell.appendChild(ag);
 
-            // 套用流年效果
-            function applyAnnual(active, year) {
-                const cells = document.querySelectorAll('.grid-cell');
-                cells.forEach(cell => {
-                    cell.classList.remove('highlight');
-                    cell.querySelectorAll('.sh-tag').forEach(t => t.remove());
-                });
+    cell.addEventListener('click',()=>onCellClick(p,cell));
+    grid.appendChild(cell);
+  });
 
-                if (!active) return;
+  // Center cell
+  const center=document.createElement('div');
+  center.className='center';
+  center.id='centerCell';
+  center.style.gridRow='2/4';
+  center.style.gridColumn='2/4';
+  center.innerHTML=`
+    <div class="center-name" id="centerName">陳致遠</div>
+    <div class="center-detail" id="centerDetail">水二局 · 陽男</div>
+    <div class="center-badges">
+      <span class="badge badge-indigo" id="badgeElement">水二局</span>
+      <span class="badge badge-orange" id="badgeGender">陽男</span>
+      <span class="badge badge-green" id="badgeYear">丙年</span>
+    </div>`;
+  grid.appendChild(center);
+}
 
-                const { zhi: targetZhi, gan } = getYearGanZhi(year);
-                cells.forEach(cell => {
-                    const cellZhi = cell.querySelector('.branch-tag')?.innerText;
-                    if (cellZhi === targetZhi) {
-                        cell.classList.add('highlight');
-                    }
-                });
+// ===== CLICK HANDLERS =====
+function onCellClick(p, cell){
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('selected'));
+  cell.classList.add('selected');
+  const stars=p.stars.map(s=>s.n).join('、');
+  const desc=PALACE_DESC[p.name]||'此宮位星曜交織，需綜合參看三方四正。';
+  const icon=PALACE_ICONS[p.name]||'🏯';
+  document.getElementById('explainIcon').textContent=icon;
+  document.getElementById('explainTitle').textContent=`${p.name}宮（${p.zhi}）`;
+  document.getElementById('explainSub').textContent=`主星：${stars||'無'}  ╱  大限：${p.age}歲`;
+  document.getElementById('explainText').textContent=desc;
+}
 
-                const hua = getSiHuaForYear(year);
-                cells.forEach(cell => {
-                    cell.querySelectorAll('.star').forEach(star => {
-                        const starName = star.innerText.trim();
-                        if (hua[starName]) {
-                            const huaChar = hua[starName];
-                            const tag = document.createElement('span');
-                            tag.className = `sh-tag ${huaChar === '忌' ? 'ji' : ''}`;
-                            tag.innerText = huaChar;
-                            star.appendChild(tag);
-                        }
-                    });
-                });
+function onAgeClick(p, tag){
+  const stars=p.stars.map(s=>s.n).join('、');
+  document.getElementById('explainIcon').textContent='⏳';
+  document.getElementById('explainTitle').textContent=`大限 ${p.age}歲（${p.name}宮）`;
+  document.getElementById('explainSub').textContent=`行至：${p.name}  ╱  主星：${stars||'無'}`;
+  document.getElementById('explainText').textContent=
+    `大限走入${p.name}宮（${p.zhi}），此十年運勢重點集中於${p.name}相關事務。主星${stars||'無'}主導此期格局，宜把握宮位特質積極發展，同時留意三方四正沖照。`;
+}
 
-                updateSiHuaDisplay(year);
-            }
+// ===== YEAR HELPERS =====
+function yearGanZhi(year){
+  return {gan:GAN[(year-4)%10], zhi:ZHI[(year-4)%12]};
+}
+function siHuaForYear(year){
+  const {gan}=yearGanZhi(year);
+  return HUA_MAP[gan]||HUA_MAP['丙'];
+}
 
-            // 刷新介面 (點擊按鈕時完整刷新)
-            function refreshUI() {
-                const name = document.getElementById('userName').value.trim() || '命造';
-                const gender = document.getElementById('userGender').value;
-                const birth = document.getElementById('userBirth').value;
-                const genderText = gender === 'male' ? '陽男' : '陰女';
-                updateCenterInfo(name, `水二局 · ${genderText}`);
-                setFormulaValues(gender);
-                saveToStorage({ name, gender, birth });
+// ===== APPLY ANNUAL =====
+function clearHuaTags(){
+  document.querySelectorAll('.hua-tag').forEach(t=>t.remove());
+  document.querySelectorAll('.cell').forEach(c=>{
+    c.classList.remove('annual-hi');
+  });
+}
 
-                const activeTab = document.querySelector('.tab.active')?.innerText;
-                const yearSelector = document.getElementById('yearSelector');
-                const isAnnual = (activeTab === '流年');
-                yearSelector.style.display = isAnnual ? 'flex' : 'none';
+function applyAnnual(){
+  clearHuaTags();
+  const yearEl=document.getElementById('annualYear');
+  const year=parseInt(yearEl.value);
+  const {zhi:targetZhi,gan}=yearGanZhi(year);
+  const hua=siHuaForYear(year);
 
-                if (isAnnual) {
-                    const selectedYear = parseInt(document.getElementById('annualYear').value);
-                    applyAnnual(true, selectedYear);
-                } else {
-                    applyAnnual(false);
-                }
+  // Highlight annual palace
+  document.querySelectorAll('.cell').forEach(cell=>{
+    const bEl=cell.querySelector('.branch');
+    if(bEl&&bEl.textContent===targetZhi) cell.classList.add('annual-hi');
+  });
 
-                bindClicks();
-            }
+  // Add hua tags
+  const huaClassMap={'祿':'lu','權':'quan','科':'ke','忌':'ji'};
+  document.querySelectorAll('.cell .star').forEach(starEl=>{
+    const name=starEl.dataset.starname;
+    if(name&&hua[name]){
+      const tag=document.createElement('span');
+      tag.className=`hua-tag ${huaClassMap[hua[name]]||''}`;
+      tag.textContent=hua[name];
+      starEl.appendChild(tag);
+    }
+  });
 
-            window.onAnnualYearChange = function() {
-                const activeTab = document.querySelector('.tab.active')?.innerText;
-                if (activeTab === '流年') {
-                    const year = parseInt(document.getElementById('annualYear').value);
-                    applyAnnual(true, year);
-                }
-            };
+  updateSiHuaDisplay(year);
+  document.getElementById('badgeYear').textContent=gan+'年';
+}
 
-            window.toggleTheme = function() {
-                document.body.classList.toggle('dark-mode');
-                updateThemeIcon();
-            };
+// ===== SIHUA DISPLAY =====
+function updateSiHuaDisplay(year){
+  const {gan}=yearGanZhi(year);
+  const hua=siHuaForYear(year);
+  const chipm={'祿':'chip-lu','權':'chip-quan','科':'chip-ke','忌':'chip-ji'};
+  const container=document.getElementById('sihuaChips');
+  container.innerHTML='';
+  document.getElementById('sihuaYear').textContent=gan+'年';
+  for(const[star,h] of Object.entries(hua)){
+    const chip=document.createElement('span');
+    chip.className=`sihua-chip ${chipm[h]||''}`;
+    chip.textContent=star+h;
+    container.appendChild(chip);
+  }
+}
 
-            function updateThemeIcon() {
-                const icon = document.getElementById('themeIcon');
-                if (document.body.classList.contains('dark-mode')) {
-                    icon.innerText = '☀️';
-                } else {
-                    icon.innerText = '🌙';
-                }
-            }
+// ===== FORMULA VALUES =====
+function setFormula(gender){
+  if(gender==='male'){
+    document.getElementById('fElement').textContent='水二局';
+    document.getElementById('fStartAge').innerHTML='2<span class="f-unit">歲</span>';
+    document.getElementById('fMaster').textContent='祿存';
+    document.getElementById('fBody').textContent='天梁';
+    document.getElementById('badgeElement').textContent='水二局';
+    document.getElementById('badgeGender').textContent='陽男';
+  } else {
+    document.getElementById('fElement').textContent='木三局';
+    document.getElementById('fStartAge').innerHTML='3<span class="f-unit">歲</span>';
+    document.getElementById('fMaster').textContent='廉貞';
+    document.getElementById('fBody').textContent='天同';
+    document.getElementById('badgeElement').textContent='木三局';
+    document.getElementById('badgeGender').textContent='陰女';
+  }
+}
 
-            // 初始載入
-            const saved = loadFromStorage();
-            if (saved) {
-                document.getElementById('userName').value = saved.name || '陳致遠';
-                document.getElementById('userGender').value = saved.gender || 'male';
-                document.getElementById('userBirth').value = saved.birth || '1990-06-15T10:30';
-            }
+// ===== STORAGE =====
+const STORE_KEY='ziwei_v2';
+function load(){ try{return JSON.parse(localStorage.getItem(STORE_KEY)||'null');}catch(e){return null;} }
+function save(d){ try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){} }
+function loadHistory(){ try{return JSON.parse(localStorage.getItem(STORE_KEY+'_hist')||'[]');}catch(e){return[];} }
+function saveHistory(arr){ try{localStorage.setItem(STORE_KEY+'_hist',JSON.stringify(arr.slice(0,8)));}catch(e){} }
 
-            updateSiHuaDisplay(2026);
-            refreshUI();
+function updateNameHints(){
+  const hist=loadHistory();
+  const hints=document.getElementById('nameHints');
+  const dl=document.getElementById('name-history');
+  hints.innerHTML='';
+  dl.innerHTML='';
+  hist.forEach(n=>{
+    const chip=document.createElement('div');
+    chip.className='hint-chip';
+    chip.textContent=n;
+    chip.onclick=()=>{document.getElementById('userName').value=n;updateCenterLive(n);};
+    hints.appendChild(chip);
+    const opt=document.createElement('option');
+    opt.value=n;
+    dl.appendChild(opt);
+  });
+}
 
-            window.switchTab = function(el, mode) {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                el.classList.add('active');
+function addToHistory(name){
+  if(!name) return;
+  let hist=loadHistory();
+  hist=hist.filter(h=>h!==name);
+  hist.unshift(name);
+  saveHistory(hist);
+  updateNameHints();
+}
 
-                const yearSelector = document.getElementById('yearSelector');
-                if (mode === 'annual') {
-                    yearSelector.style.display = 'flex';
-                    const year = parseInt(document.getElementById('annualYear').value);
-                    applyAnnual(true, year);
-                } else {
-                    yearSelector.style.display = 'none';
-                    applyAnnual(false);
-                }
-            };
+// ===== LIVE UPDATE =====
+function updateCenterLive(name){
+  const el=document.getElementById('centerName');
+  if(el) el.textContent=name.trim()||'命造';
+}
 
-            // 暴露 refreshUI 給按鈕使用
-            window.updateChart = refreshUI;
-        })();
-    </script>
+// ===== SUBMIT =====
+window.submitChart=function(){
+  const name=(document.getElementById('userName').value||'').trim()||'命造';
+  const gender=document.getElementById('userGender').value;
+  const birth=document.getElementById('userBirth').value;
+  save({name,gender,birth});
+  addToHistory(name);
+  document.getElementById('centerName').textContent=name;
+  const gText=gender==='male'?'陽男':'陰女';
+  document.getElementById('centerDetail').textContent=`命盤 · ${gText}`;
+  setFormula(gender);
+  const currentYear=getCurrentAnnualYear();
+  updateSiHuaDisplay(currentYear);
+  const activeTab=document.querySelector('.tab.active');
+  if(activeTab&&activeTab.dataset.mode==='annual') applyAnnual();
+  else clearHuaTags();
+  // Pulse animation
+  const btn=document.querySelector('.btn-submit');
+  btn.textContent='✓ 已儲存！';
+  setTimeout(()=>{btn.textContent='✦ 更新命盤 & 記憶';},1500);
+};
+
+// ===== TABS =====
+window.switchTab=function(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const mode=el.dataset.mode;
+  const yearBar=document.getElementById('yearBar');
+  if(mode==='annual'){
+    yearBar.classList.add('show');
+    applyAnnual();
+  } else {
+    yearBar.classList.remove('show');
+    clearHuaTags();
+  }
+};
+
+// ===== YEAR SELECTOR INIT =====
+function initYearSelector(){
+  const sel=document.getElementById('annualYear');
+  sel.innerHTML='';
+  const now=new Date().getFullYear();
+  for(let y=now-6;y<=now+6;y++){
+    const opt=document.createElement('option');
+    opt.value=y;
+    opt.textContent=y+'年（'+yearGanZhi(y).gan+yearGanZhi(y).zhi+'）';
+    if(y===now) opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+
+function getCurrentAnnualYear(){
+  return parseInt(document.getElementById('annualYear').value)||new Date().getFullYear();
+}
+
+// ===== THEME =====
+const themeBtn=document.getElementById('themeBtn');
+function applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  themeBtn.textContent=dark?'☀️':'🌙';
+  try{localStorage.setItem('ziwei_theme',dark?'dark':'light');}catch(e){}
+}
+themeBtn.addEventListener('click',()=>{
+  applyTheme(!document.body.classList.contains('dark'));
+});
+
+// ===== INIT =====
+function init(){
+  // Theme
+  const savedTheme=localStorage.getItem('ziwei_theme');
+  if(savedTheme) applyTheme(savedTheme==='dark');
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme(true);
+
+  // Build grid
+  buildGrid();
+
+  // Year selector
+  initYearSelector();
+
+  // Load saved data
+  const data=load();
+  if(data){
+    if(data.name) document.getElementById('userName').value=data.name;
+    if(data.gender) document.getElementById('userGender').value=data.gender;
+    if(data.birth) document.getElementById('userBirth').value=data.birth;
+  } else {
+    // defaults
+    document.getElementById('userName').value='陳致遠';
+    document.getElementById('userBirth').value='1990-06-15T10:30';
+  }
+
+  // Update center
+  const name=(document.getElementById('userName').value||'').trim()||'命造';
+  const gender=document.getElementById('userGender').value;
+  document.getElementById('centerName').textContent=name;
+  document.getElementById('centerDetail').textContent=`命盤 · ${gender==='male'?'陽男':'陰女'}`;
+  setFormula(gender);
+  updateSiHuaDisplay(getCurrentAnnualYear());
+  updateNameHints();
+
+  // Live name update
+  document.getElementById('userName').addEventListener('input',e=>{
+    updateCenterLive(e.target.value);
+  });
+}
+
+init();
+})();
+</script>
 </body>
 </html>
