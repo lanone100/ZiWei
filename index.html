@@ -183,14 +183,101 @@ body.dark::after{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .btn-theme{
-  width:44px;height:44px;border-radius:50%;
-  background:var(--bg-card);backdrop-filter:var(--blur);
-  border:1px solid var(--border);box-shadow:var(--sh-sm);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.2rem;cursor:pointer;flex-shrink:0;
-  transition:transform .2s,background .3s;
+  position:relative;
+  width:72px;height:36px;
+  border-radius:40px;
+  background:linear-gradient(135deg,#1A0A2E 0%,#2D1B69 100%);
+  border:2px solid rgba(120,80,200,.5);
+  box-shadow:0 0 0 0 rgba(120,80,200,.4), var(--sh-sm);
+  cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;
+  padding:3px;
+  transition:background .45s, border-color .45s, box-shadow .3s;
+  overflow:hidden;
 }
-.btn-theme:active{transform:scale(.88)}
+body.dark .btn-theme{
+  background:linear-gradient(135deg,#FFD060 0%,#FFA020 100%);
+  border-color:rgba(255,180,40,.6);
+  box-shadow:0 0 12px rgba(255,160,20,.35), var(--sh-sm);
+}
+.btn-theme:active{transform:scale(.93)}
+
+/* Sliding thumb */
+.theme-thumb{
+  position:absolute;
+  width:26px;height:26px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+  left:3px;
+  display:flex;align-items:center;justify-content:center;
+  transition:left .38s cubic-bezier(.34,1.56,.64,1), background .4s;
+  z-index:2;
+}
+body.dark .theme-thumb{
+  left:39px;
+  background:#1A0A2E;
+}
+
+/* Moon SVG (light mode — shows moon) */
+.icon-moon{
+  position:absolute;left:3px;
+  width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  z-index:3;pointer-events:none;
+}
+.icon-moon svg{width:15px;height:15px;transition:opacity .3s}
+body.dark .icon-moon svg{opacity:0}
+
+/* Sun SVG (dark mode — shows sun) */
+.icon-sun{
+  position:absolute;left:3px;
+  width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  z-index:3;pointer-events:none;
+}
+body:not(.dark) .icon-sun{left:39px;}
+body.dark .icon-sun{left:3px;}
+.icon-sun svg{width:15px;height:15px;transition:opacity .3s}
+body:not(.dark) .icon-sun svg{opacity:0}
+body.dark .icon-sun svg{opacity:1}
+
+/* Stars & dots background (light=night sky, dark=day sky) */
+.theme-bg-stars{
+  position:absolute;inset:0;border-radius:inherit;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:7px;gap:2px;
+  pointer-events:none;z-index:1;
+}
+.theme-star{
+  width:3px;height:3px;border-radius:50%;
+  background:rgba(255,255,255,.7);
+  transition:opacity .4s;
+}
+.theme-star:nth-child(2){width:2px;height:2px;background:rgba(255,255,255,.5)}
+.theme-star:nth-child(3){width:2px;height:2px;opacity:.6}
+body.dark .theme-star{opacity:0}
+
+/* Sun rays (dark mode only) */
+.theme-bg-sun{
+  position:absolute;inset:0;border-radius:inherit;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:8px;
+  pointer-events:none;z-index:1;
+  opacity:0;transition:opacity .4s;
+}
+body.dark .theme-bg-sun{opacity:1}
+.theme-cloud{
+  width:20px;height:8px;border-radius:4px;
+  background:rgba(255,255,255,.5);
+  position:relative;
+}
+.theme-cloud::before{
+  content:'';position:absolute;
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  top:-5px;left:3px;
+}
 
 /* ===================== FORM ===================== */
 .form-row{display:grid;grid-template-columns:1.55fr 1fr;gap:10px;margin-bottom:10px}
@@ -554,7 +641,31 @@ body.dark .ex-tag-star{color:#FFD700;background:rgba(255,196,0,.15);border-color
       <div class="hdr-eyebrow">紫微命理 · 命盤系統</div>
       <div class="hdr-title">紫微斗數</div>
     </div>
-    <button class="btn-theme" id="btnTheme">🌙</button>
+    <button class="btn-theme" id="btnTheme" aria-label="切換深淺色模式" onclick="setTheme(!document.body.classList.contains('dark'))">
+      <!-- Night stars -->
+      <div class="theme-bg-stars">
+        <span class="theme-star"></span>
+        <span class="theme-star"></span>
+        <span class="theme-star"></span>
+      </div>
+      <!-- Day cloud -->
+      <div class="theme-bg-sun"><div class="theme-cloud"></div></div>
+      <!-- Sliding thumb -->
+      <div class="theme-thumb"></div>
+      <!-- Moon icon (light mode) -->
+      <div class="icon-moon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" fill="#5856D6" stroke="#5856D6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <!-- Sun icon (dark mode) -->
+      <div class="icon-sun">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4" fill="#FFD060" stroke="#FFA020" stroke-width="1.5"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="#FFD060" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </button>
   </header>
 
   <div class="pc-row">
@@ -1568,7 +1679,6 @@ document.getElementById('btnSub').onclick=function(){
 const btnTh=document.getElementById('btnTheme');
 function setTheme(dark){
   document.body.classList.toggle('dark',dark);
-  btnTh.textContent=dark?'☀️':'🌙';
   try{localStorage.setItem('ziwei4t',dark?'1':'0')}catch{}
 }
 btnTh.onclick=()=>setTheme(!document.body.classList.contains('dark'));
