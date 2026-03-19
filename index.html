@@ -492,7 +492,45 @@ body.dark .ex-tag-star{color:#FFD700;background:rgba(255,196,0,.15);border-color
 .shc-ke  {background:rgba(232,114,74,.12);  color:var(--blue);   border:1px solid rgba(232,114,74,.28)}
 .shc-ji  {background:rgba(232,58,90,.12);   color:var(--red);    border:1px solid rgba(232,58,90,.28)}
 
-/* mode badge */
+/* ===================== LUNAR PANEL ===================== */
+.lunar-panel{
+  background:var(--g-soft);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  padding:12px 14px;
+  margin-top:11px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.lunar-row{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.lunar-item{
+  flex:1;min-width:0;
+  background:var(--bg-input);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:8px 10px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.lunar-item-full{flex:1 1 100%}
+.lunar-lbl{
+  font-size:.62rem;font-weight:700;
+  color:var(--t2);letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.lunar-val{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(.82rem,3.5vw,1rem);
+  font-weight:700;color:var(--indigo);
+  line-height:1.2;
+  word-break:break-all;
+}
+.lunar-big{
+  font-size:clamp(1rem,4.5vw,1.3rem);
+  background:var(--g-accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
 .ex-mode-badge{
   font-size:.68rem;font-weight:800;
   padding:3px 10px;border-radius:16px;
@@ -537,8 +575,47 @@ body.dark .ex-tag-star{color:#FFD700;background:rgba(255,196,0,.15);border-color
       </div>
       <div class="field">
         <label>出生時間（公曆）</label>
-        <input id="iBirth" type="datetime-local">
+        <input id="iBirth" type="datetime-local" oninput="onBirthChange()">
       </div>
+
+      <!-- LUNAR INFO DISPLAY -->
+      <div class="lunar-panel" id="lunarPanel">
+        <div class="lunar-row">
+          <div class="lunar-item">
+            <div class="lunar-lbl">農曆生日</div>
+            <div class="lunar-val" id="lunarDate">—</div>
+          </div>
+          <div class="lunar-item">
+            <div class="lunar-lbl">干支年</div>
+            <div class="lunar-val" id="lunarGanZhi">—</div>
+          </div>
+        </div>
+        <div class="lunar-row">
+          <div class="lunar-item">
+            <div class="lunar-lbl">生肖</div>
+            <div class="lunar-val lunar-big" id="lunarZodiac">—</div>
+          </div>
+          <div class="lunar-item">
+            <div class="lunar-lbl">實歲</div>
+            <div class="lunar-val lunar-big" id="ageReal">—</div>
+          </div>
+          <div class="lunar-item">
+            <div class="lunar-lbl">虛歲</div>
+            <div class="lunar-val lunar-big" id="ageNominal">—</div>
+          </div>
+        </div>
+        <div class="lunar-row">
+          <div class="lunar-item lunar-item-full">
+            <div class="lunar-lbl">時辰（地支）</div>
+            <div class="lunar-val" id="lunarHour">—</div>
+          </div>
+          <div class="lunar-item lunar-item-full">
+            <div class="lunar-lbl">今日距生日</div>
+            <div class="lunar-val" id="lunarCountdown">—</div>
+          </div>
+        </div>
+      </div>
+
       <button class="btn-submit" id="btnSub">✦ 更新命盤 · 記憶</button>
     </div>
 
@@ -1159,6 +1236,166 @@ function updateSH(y){
   }
 }
 
+/* ================================================================
+   農曆轉換引擎
+   ================================================================ */
+const LUNAR_INFO=(()=>{
+  const RAW=[
+    0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+    0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+    0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+    0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+    0x06ca0,0x0b550,0x15355,0x04da0,0x0a5d0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+    0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+    0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+    0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+    0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06aa0,0x0a6b6,0x056a0,0x02b60,0x09570,
+    0x052b2,0x0a950,0x0e952,0x06aa0,0x0ad8a,0x056a0,0x02b60,0x185e3,0x092d0,0x0c9d8,
+    0x0c950,0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,
+    0x0b557,0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,
+    0x06b20,0x0adc6,0x0aae0,0x092e0,0x0cabf,0x0c950,0x0d4a0,0x0da50,0x07552,0x056a0,
+    0x0abb7,0x025d0,0x092d0,0x0cab5,0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,
+    0x0a5b0,0x15176,0x052b0,0x0f92f,0x0e950,0x06aa0,0x0ada0,0x0aab8,0x056a0,0x092d0,
+    0x0cab8,0x0c950,0x0d4a0,0x0da50,0x16aa5,0x056a0,0x0aab0,0x0aaba,0x025b0,0x092d0,
+    0x0d2b4,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,0x0b273,
+    0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x056a0,0x0a6d0,0x0d0b3,0x0c950,0x0d250,
+    0x1d555,0x0b540,0x0b6a0,0x195a3,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,
+    0x06d40,
+  ];
+  const BASE_YEAR=1900;
+  // 農曆正月初一對應公曆 月,日 (1900-2100)
+  const SPRING=[
+    [1,31],[2,19],[2, 8],[1,29],[2,16],[2, 4],[1,25],[2,13],[2, 2],[1,22],
+    [2,10],[1,30],[2,18],[2, 6],[1,26],[2,14],[2, 3],[1,23],[2,11],[2, 1],
+    [2,20],[2, 8],[1,28],[2,16],[2, 5],[1,24],[2,13],[2, 2],[1,23],[2,10],
+    [1,30],[2,17],[2, 6],[1,26],[2,14],[2, 4],[1,24],[2,11],[1,31],[2,19],
+    [2, 8],[1,27],[2,15],[2, 5],[1,25],[2,13],[2, 2],[1,22],[2,10],[1,29],
+    [2,17],[2, 6],[1,27],[2,14],[2, 3],[1,24],[2,12],[1,31],[2,18],[2, 8],
+    [1,28],[2,15],[2, 5],[1,25],[2,13],[2, 2],[1,21],[2, 9],[1,30],[2,17],
+    [2, 6],[1,27],[2,15],[2, 3],[1,23],[2,11],[1,31],[2,18],[2, 7],[1,28],
+    [2,16],[2, 5],[1,25],[2,13],[2, 2],[2,20],[2, 9],[1,29],[2,17],[2, 6],
+    [1,27],[2,15],[2, 4],[1,23],[2,10],[1,31],[2,19],[2, 7],[1,28],[2,16],
+    [2, 5],[1,24],[2,12],[2, 1],[1,22],[2, 9],[1,29],[2,18],[2, 7],[1,26],
+    [2,14],[2, 3],[1,23],[2,10],[1,31],[2,19],[2, 8],[1,28],[2,16],[2, 5],
+    [1,25],[2,12],[2, 1],[1,22],[2,10],[1,29],[2,17],[2, 6],[1,26],[2,13],
+    [2, 3],[1,23],[2,11],[1,31],[2,19],[2, 8],[1,28],[2,15],[2, 5],[1,25],
+    [2,12],[2, 1],[1,22],[2,10],[1,30],[2,17],[2, 6],[1,26],[2,14],[2, 4],
+    [1,23],[2,11],[2, 1],[2,19],[2, 8],[1,28],[2,15],[2, 4],[1,24],[2,12],
+    [2, 2],[1,22],[2,10],[1,29],[2,17],[2, 7],[1,27],[2,13],[2, 3],[1,24],
+    [2,11],[1,31],[2,19],[2, 8],[1,28],[2,15],[2, 4],[1,24],[2,12],[2, 1],
+    [2,20],[2, 9],[1,29],[2,16],[2, 5],[1,25],[2,13],[2, 3],[1,23],[2,10],
+    [1,30],[2,17],[2, 6],[1,26],[2,14],[2, 3],[1,23],[2,10],[1,30],[2,17],
+    [2, 7],
+  ];
+  const CN_MON=['正','二','三','四','五','六','七','八','九','十','冬','臘'];
+  const CN_DAY=['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+    '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+    '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+
+  function leapMonth(y){return RAW[y-BASE_YEAR]&0xf}
+  function leapDays(y){return leapMonth(y)?((RAW[y-BASE_YEAR]&0x10000)?30:29):0}
+  function monthDays(y,m){return (RAW[y-BASE_YEAR]&(0x10000>>m))?30:29}
+  function yearDays(y){
+    let s=348;
+    for(let i=0x8000;i>0x8;i>>=1) s+=(RAW[y-BASE_YEAR]&i)?1:0;
+    return s+leapDays(y);
+  }
+
+  function solarToLunar(sy,sm,sd){
+    let offset=Math.round((new Date(sy,sm-1,sd)-new Date(1900,0,31))/86400000);
+    let y,m,d=0,leap=false,lm,daysOfYear;
+    for(y=BASE_YEAR;y<2101&&offset>0;y++){offset-=yearDays(y)}
+    if(offset<0){offset+=yearDays(--y)}
+    lm=leapMonth(y);
+    let daysInMonth=0;
+    for(m=1;m<13&&offset>0;m++){
+      if(lm>0&&m===(lm+1)&&!leap){--m;leap=true;daysInMonth=leapDays(y);}
+      else{daysInMonth=monthDays(y,m)}
+      if(leap&&m===(lm+1)) leap=false;
+      offset-=daysInMonth;
+    }
+    if(offset===0&&lm>0&&m===(lm+1)){
+      if(leap){leap=false;}else{leap=true;--m;}
+    }
+    if(offset<0){offset+=daysInMonth;--m;}
+    d=offset+1;
+    return {y,m,d,leap,
+      monStr:(leap?'閏':'')+CN_MON[m-1]+'月',
+      dayStr:CN_DAY[d-1]
+    };
+  }
+  return {solarToLunar};
+})();
+
+/* ========== 生肖 ========== */
+const ZODIAC_LIST=['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+const ZODIAC_EMOJI=['🐭','🐮','🐯','🐰','🐲','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
+function getZodiac(lunarYear){
+  const i=((lunarYear-4)%12+12)%12;
+  return {name:ZODIAC_LIST[i],emoji:ZODIAC_EMOJI[i]};
+}
+
+/* ========== 時辰 ========== */
+const SHICHEN=[
+  {z:'子',r:'23:00–00:59'},{z:'丑',r:'01:00–02:59'},
+  {z:'寅',r:'03:00–04:59'},{z:'卯',r:'05:00–06:59'},
+  {z:'辰',r:'07:00–08:59'},{z:'巳',r:'09:00–10:59'},
+  {z:'午',r:'11:00–12:59'},{z:'未',r:'13:00–14:59'},
+  {z:'申',r:'15:00–16:59'},{z:'酉',r:'17:00–18:59'},
+  {z:'戌',r:'19:00–20:59'},{z:'亥',r:'21:00–22:59'}
+];
+function getShichen(h){
+  if(h===23) return SHICHEN[0];
+  return SHICHEN[Math.floor(((h+1)%24)/2)];
+}
+
+/* ========== 實歲 / 虛歲 ========== */
+function calcAge(by,bm,bd){
+  const now=new Date();
+  const ny=now.getFullYear(),nm=now.getMonth()+1,nd=now.getDate();
+  let real=ny-by;
+  if(nm<bm||(nm===bm&&nd<bd)) real--;
+  return {real, nominal:real+1};
+}
+function daysToNextBirthday(bm,bd){
+  const now=new Date();
+  const ny=now.getFullYear();
+  let next=new Date(ny,bm-1,bd);
+  if(next<=now) next=new Date(ny+1,bm-1,bd);
+  const diff=Math.ceil((next-now)/86400000);
+  return diff===0?'🎂 今天就是生日！':`距下個生日還有 ${diff} 天`;
+}
+
+/* ========== 更新農曆面板 ========== */
+function updateLunarPanel(){
+  const val=document.getElementById('iBirth').value;
+  const ids=['lunarDate','lunarGanZhi','lunarZodiac','ageReal','ageNominal','lunarHour','lunarCountdown'];
+  if(!val){ids.forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});return;}
+  try{
+    const dt=new Date(val);
+    const sy=dt.getFullYear(),sm=dt.getMonth()+1,sd=dt.getDate(),sh=dt.getHours();
+    const lunar=LUNAR_INFO.solarToLunar(sy,sm,sd);
+    const gz={gan:GAN[(lunar.y-4)%10],zhi:ZHI[((lunar.y-4)%12+12)%12]};
+    const zodiac=getZodiac(lunar.y);
+    const ages=calcAge(sy,sm,sd);
+    const sc=getShichen(sh);
+    const countdown=daysToNextBirthday(sm,sd);
+
+    document.getElementById('lunarDate').textContent=
+      `農曆 ${lunar.y} 年 ${lunar.monStr}${lunar.dayStr}`;
+    document.getElementById('lunarGanZhi').textContent=`${gz.gan}${gz.zhi}年`;
+    document.getElementById('lunarZodiac').textContent=`${zodiac.emoji} ${zodiac.name}`;
+    document.getElementById('ageReal').textContent=`${ages.real} 歲`;
+    document.getElementById('ageNominal').textContent=`${ages.nominal} 歲`;
+    document.getElementById('lunarHour').textContent=`${sc.z}時・${sc.r}`;
+    document.getElementById('lunarCountdown').textContent=countdown;
+
+    const bYr=document.getElementById('bYr');if(bYr)bYr.textContent=gz.gan+'年';
+  }catch(e){console.warn('lunar error',e);}
+}
+window.onBirthChange=updateLunarPanel;
+
 /* Show intro text when switching tabs */
 function showModeIntro(mode){
   const y=curY();
@@ -1318,6 +1555,7 @@ document.getElementById('btnSub').onclick=function(){
   const b=document.getElementById('iBirth').value;
   save({name,g,b});addH(name);
   liveName(name);
+  updateLunarPanel();
   const cd=document.getElementById('cDet');if(cd)cd.textContent='命盤 · '+(g==='m'?'陽男':'陰女');
   setFormula(g);updateSH(curY());
   const on=document.querySelector('.tab.on');
@@ -1359,6 +1597,7 @@ btnTh.onclick=()=>setTheme(!document.body.classList.contains('dark'));
   const cd=document.getElementById('cDet');if(cd)cd.textContent='命盤 · '+(gv==='m'?'陽男':'陰女');
   setFormula(gv);updateSH(curY());renderH();
   showModeIntro('base');
+  updateLunarPanel();
 
   document.getElementById('iName').addEventListener('input',e=>liveName(e.target.value));
 })();
