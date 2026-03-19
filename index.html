@@ -1,122 +1,210 @@
-<script>
-/**
- * 紫微斗數核心引擎
- */
-const ZiweiEngine = {
-    // 地支對照表
-    zhi: ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'],
-    // 十二宮位名稱
-    palaces: ['命宮', '兄弟', '夫妻', '子女', '財帛', '疾厄', '遷移', '僕役', '官祿', '田宅', '福德', '父母'],
-
-    // 1. 簡易農曆轉換 (示意邏輯，正式開發建議引用開源 Lunar 庫)
-    getLunarDate(dateStr) {
-        const d = new Date(dateStr);
-        // 這裡暫時回傳模擬農曆數據，實務需串接算法
-        return {
-            yearStem: '丙', // 天干
-            yearZhi: '午',  // 地支
-            month: 3,
-            day: 15,
-            hourZhi: '子'
-        };
-    },
-
-    // 2. 計算五行局 (決定大限起始)
-    // 邏輯：根據命宮所在位置與出生年干推算
-    getFiveElements(palaceZhi, yearStem) {
-        const map = { '木': 3, '火': 6, '土': 5, '金': 4, '水': 2 };
-        return map['水']; // 範例回傳水二局
-    },
-
-    // 3. 計算大限 (Decade)
-    // startAge: 五行局數, isForward: 陽男陰女順行(true)
-    calculateDecades(startAge, isForward) {
-        let decades = [];
-        for (let i = 0; i < 12; i++) {
-            let ageStart = startAge + (i * 10);
-            let ageEnd = ageStart + 9;
-            decades.push(`${ageStart}-${ageEnd}`);
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZiWei Pro - 2026 命理系統</title>
+    <style>
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1C1C1E;
+            --accent-color: #007AFF;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass: blur(20px);
+            --red-main: #FF3B30;
+            --green-main: #34C759;
         }
-        return isForward ? decades : decades.reverse();
-    },
 
-    // 4. 定流年命宮 (Annual)
-    // 2026 丙午年，流年在「午」宮
-    getAnnualPalace(targetYear) {
-        const offset = (targetYear - 4) % 12; // 0 是子
-        return this.zhi[offset];
-    }
-};
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --card-bg: rgba(28, 28, 30, 0.85);
+            --text-main: #FFFFFF;
+            --border-color: rgba(255, 255, 255, 0.15);
+        }
 
-/**
- * 畫面更新邏輯
- */
-function runCalculation() {
-    const name = document.getElementById('userName').value;
-    const time = document.getElementById('birthTime').value;
-    const gender = document.getElementById('gender').value;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; transition: all 0.3s ease; }
 
-    if (!time) return alert("請輸入出生日期");
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px; }
+        h1 { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+        .btn-icon { background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 15px; border-radius: 20px; cursor: pointer; backdrop-filter: var(--glass); font-size: 14px; font-weight: 500; }
 
-    const lunar = ZiweiEngine.getLunarDate(time);
-    const startAge = 2; // 假設水二局
-    const isForward = (lunar.yearStem === '丙' && gender === 'male'); // 陽男順行
-    
-    const decadeLabels = ZiweiEngine.calculateDecades(startAge, isForward);
-    const currentYear = new Date().getFullYear();
-    const annualZhi = ZiweiEngine.getAnnualPalace(currentYear);
+        /* Input Card */
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 20px; backdrop-filter: var(--glass); border: 1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0,0,0,0.05); }
+        .grid-input { display: grid; grid-template-columns: 1.5fr 1fr; gap: 15px; margin-bottom: 15px; }
+        label { font-size: 13px; color: #8E8E93; font-weight: 600; margin-bottom: 6px; display: block; }
+        input, select { width: 100%; border: none; background: rgba(120, 120, 128, 0.12); border-radius: 12px; padding: 12px; font-size: 16px; color: var(--text-main); outline: none; }
+        .primary-btn { width: 100%; background: var(--accent-color); color: white; border: none; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; transition: transform 0.1s ease; }
+        .primary-btn:active { transform: scale(0.98); }
 
-    // 渲染到 UI
-    updateUI(name, lunar, decadeLabels, annualZhi);
-}
+        /* Tabs */
+        .tabs { display: flex; background: rgba(120, 120, 128, 0.12); padding: 3px; border-radius: 10px; margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 8px; font-size: 14px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .tab.active { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #000; }
+        [data-theme="dark"] .tab.active { background: #636366; color: white; }
 
-function updateUI(name, lunar, decades, annualZhi) {
-    // 更新中間資訊欄
-    const resultBox = document.getElementById('resultText');
-    resultBox.innerHTML = `
-        <div style="font-size:16px; color:var(--accent-color); font-weight:bold;">${name}</div>
-        <div style="font-size:12px;">農曆：${lunar.yearStem}${lunar.yearZhi}年 ${lunar.month}月${lunar.day}日</div>
-        <div style="margin-top:5px; padding:4px; background:#E5E5EA; border-radius:4px; font-size:10px;">
-            ${new Date().getFullYear()} 流年：${annualZhi}
+        /* Ziwei Chart Grid */
+        .chart { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 110px); gap: 4px; border-radius: 12px; overflow: hidden; }
+        .cell { background: var(--card-bg); border: 0.5px solid var(--border-color); padding: 8px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .center-info { grid-column: 2 / 4; grid-row: 2 / 4; display: flex; flex-direction: column; justify-content: center; align-items: center; background: transparent; border: none; text-align: center; }
+
+        /* Text Styles in Grid */
+        .star-box { display: flex; flex-wrap: wrap; gap: 2px; }
+        .star { writing-mode: vertical-rl; font-size: 14px; font-weight: 700; color: var(--text-main); letter-spacing: 2px; position: relative; }
+        .star.main-red { color: var(--red-main); }
+        .sh-tag { writing-mode: horizontal-tb; font-size: 9px; background: var(--green-main); color: white; padding: 1px 2px; border-radius: 3px; position: absolute; top: -5px; right: -8px; }
+        .sh-tag.ji { background: var(--red-main); }
+        .p-name { align-self: flex-end; font-size: 11px; color: white; background: #8E8E93; padding: 2px 4px; border-radius: 4px; }
+        .g-branch { position: absolute; bottom: 4px; left: 8px; font-size: 10px; color: #AEAEB2; }
+        .age-tag { position: absolute; top: 4px; right: 4px; font-size: 9px; color: #AEAEB2; }
+
+        /* Highlight Current Year */
+        .cell.highlight { border: 2px solid var(--accent-color); z-index: 10; box-shadow: 0 0 15px rgba(0,122,255,0.2); }
+
+        @media (max-width: 400px) {
+            .chart { grid-template-rows: repeat(4, 100px); }
+            .star { font-size: 13px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<header>
+    <h1>ZiWei Pro</h1>
+    <div class="btn-icon" onclick="toggleTheme()">🌓 模式切換</div>
+</header>
+
+<div class="card">
+    <div class="grid-input">
+        <div>
+            <label>姓名</label>
+            <input type="text" id="uName" placeholder="輸入姓名">
         </div>
-    `;
+        <div>
+            <label>性別</label>
+            <select id="uGender">
+                <option value="male">乾造 (男)</option>
+                <option value="female">坤造 (女)</option>
+            </select>
+        </div>
+    </div>
+    <label>出生時間 (公曆)</label>
+    <input type="datetime-local" id="uBirth">
+    <div style="margin-top:15px;">
+        <button class="primary-btn" onclick="calc()">開始排盤並記憶</button>
+    </div>
+</div>
 
-    // 遍歷所有宮位，填入大限歲數
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach((cell, index) => {
-        // 清除舊的大限標籤
-        const oldTag = cell.querySelector('.decade-tag');
-        if (oldTag) oldTag.remove();
+<div class="tabs">
+    <div class="tab active" onclick="switchMode(this, 'base')">本命</div>
+    <div class="tab" onclick="switchMode(this, 'decade')">大限</div>
+    <div class="tab" onclick="switchMode(this, 'annual')">2026 流年</div>
+</div>
 
-        // 加入新的大限標籤 (Apple Style Tag)
-        const tag = document.createElement('div');
-        tag.className = 'decade-tag';
-        tag.style = "position:absolute; top:4px; right:4px; font-size:9px; color:#8E8E93;";
-        tag.innerText = decades[index] || '';
-        cell.appendChild(tag);
+<div class="chart" id="ziweiChart">
+    <div class="cell" data-zhi="巳"> <div class="star-box"><div class="star">太陽</div><div class="star main-red">巨門</div></div> <div class="age-tag"></div><div class="g-branch">巳</div><div class="p-name">父母</div> </div>
+    <div class="cell" data-zhi="午"> <div class="star-box"><div class="star main-red">天同</div><div class="star">太陰</div></div> <div class="age-tag"></div><div class="g-branch">午</div><div class="p-name">福德</div> </div>
+    <div class="cell" data-zhi="未"> <div class="star-box"><div class="star">武曲</div><div class="star">貪狼</div></div> <div class="age-tag"></div><div class="g-branch">未</div><div class="p-name">田宅</div> </div>
+    <div class="cell" data-zhi="申"> <div class="star-box"><div class="star">太陽</div></div> <div class="age-tag"></div><div class="g-branch">申</div><div class="p-name">官祿</div> </div>
 
-        // 如果是流年宮位，加亮邊框
-        if (cell.querySelector('.ground-text').innerText === annualZhi) {
-            cell.style.border = "2px solid var(--accent-color)";
-            cell.style.boxShadow = "inset 0 0 10px rgba(0,122,255,0.1)";
-        } else {
-            cell.style.border = "1px solid var(--border-color)";
+    <div class="cell" data-zhi="酉"> <div class="star-box"><div class="star main-red">天機</div><div class="star">天梁</div></div> <div class="age-tag"></div><div class="g-branch">酉</div><div class="p-name">僕役</div> </div>
+    <div class="cell" data-zhi="戌"> <div class="star-box"><div class="star main-red">紫微</div><div class="star">七殺</div></div> <div class="age-tag"></div><div class="g-branch">戌</div><div class="p-name">遷移</div> </div>
+    
+    <div class="cell" data-zhi="亥"> <div class="star-box"><div class="star main-red">廉貞</div><div class="star">破軍</div></div> <div class="age-tag"></div><div class="g-branch">亥</div><div class="p-name">疾厄</div> </div>
+    <div class="cell" data-zhi="子"> <div class="star-box"><div class="star">天府</div></div> <div class="age-tag"></div><div class="g-branch">子</div><div class="p-name">財帛</div> </div>
+    <div class="cell" data-zhi="丑"> <div class="star-box"><div class="star">太陰</div></div> <div class="age-tag"></div><div class="g-branch">丑</div><div class="p-name">子女</div> </div>
+    <div class="cell" data-zhi="寅"> <div class="star-box"><div class="star">天梁</div></div> <div class="age-tag"></div><div class="g-branch">寅</div><div class="p-name">夫妻</div> </div>
+    
+    <div class="cell" data-zhi="卯"> <div class="star-box"><div class="star main-red">天同</div></div> <div class="age-tag"></div><div class="g-branch">卯</div><div class="p-name">兄弟</div> </div>
+    <div class="cell" data-zhi="辰"> <div class="star-box"><div class="star main-red">紫微</div><div class="star">天相</div></div> <div class="age-tag"></div><div class="g-branch">辰</div><div class="p-name">命宮</div> </div>
+
+    <div class="center-info" id="summary">
+        <div style="font-weight:700; font-size:18px;">請排盤</div>
+        <div style="font-size:12px; color:#8E8E93;">歡迎使用專業命理系統</div>
+    </div>
+</div>
+
+<script>
+    const siHuaMap = { '丙': { '天同': '祿', '天機': '權', '文昌': '科', '廉貞': '忌' } }; // 以2026丙年為例
+
+    window.onload = () => {
+        const saved = localStorage.getItem('ziwei_data');
+        if (saved) {
+            const data = JSON.parse(saved);
+            document.getElementById('uName').value = data.name;
+            document.getElementById('uBirth').value = data.birth;
+            document.getElementById('uGender').value = data.gender;
+            calc();
         }
-    });
+    };
 
-    // 儲存資料到 LocalStorage
-    localStorage.setItem('ziwei_user_data', JSON.stringify({name, time, gender}));
-}
+    function toggleTheme() {
+        const body = document.body;
+        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    }
+
+    function switchMode(el, mode) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        if (mode === 'annual') {
+            applyAnnual(true);
+        } else {
+            applyAnnual(false);
+        }
+    }
+
+    function calc() {
+        const info = {
+            name: document.getElementById('uName').value || "訪客",
+            birth: document.getElementById('uBirth').value,
+            gender: document.getElementById('uGender').value
+        };
+        if(!info.birth) return alert("請輸入出生時間");
+
+        localStorage.setItem('ziwei_data', JSON.stringify(info));
+        
+        // 模擬五行局大限
+        const startAge = 2; // 預設水二局
+        document.querySelectorAll('.cell').forEach((c, i) => {
+            const ageRange = c.querySelector('.age-tag');
+            ageRange.innerText = `${startAge + (i*10)}-${startAge + (i*10) + 9}`;
+        });
+
+        document.getElementById('summary').innerHTML = `
+            <div style="color:var(--accent-color); font-weight:800; font-size:20px;">${info.name}</div>
+            <div style="font-size:13px; margin-top:4px;">水二局 · 陽${info.gender === 'male' ? '男' : '女'}</div>
+        `;
+    }
+
+    function applyAnnual(isActive) {
+        const cells = document.querySelectorAll('.cell');
+        const sh = siHuaMap['丙'];
+
+        cells.forEach(c => {
+            c.classList.remove('highlight');
+            // 清除舊四化
+            c.querySelectorAll('.sh-tag').forEach(tag => tag.remove());
+
+            if (isActive) {
+                // 1. 2026 丙午年，流年命宮在「午」
+                if (c.getAttribute('data-zhi') === '午') c.classList.add('highlight');
+
+                // 2. 標註丙年四化
+                c.querySelectorAll('.star').forEach(s => {
+                    const sName = s.innerText;
+                    if (sh[sName]) {
+                        const tag = document.createElement('span');
+                        tag.className = `sh-tag ${sh[sName] === '忌' ? 'ji' : ''}`;
+                        tag.innerText = sh[sName];
+                        s.appendChild(tag);
+                    }
+                });
+            }
+        });
+    }
 </script>
 
-<style>
-    /* 補充大限標籤樣式 */
-    .decade-tag {
-        background: rgba(0,0,0,0.05);
-        padding: 1px 4px;
-        border-radius: 4px;
-    }
-    [data-theme="dark"] .decade-tag {
-        background: rgba(255,255,255,0.1);
-    }
-</style>
+</body>
+</html>
