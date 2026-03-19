@@ -359,18 +359,95 @@ body.dark::after{
   background:var(--bg-card);backdrop-filter:var(--blur);
   border:1px solid var(--border);border-radius:var(--r-xl);
   padding:clamp(14px,3.5vw,20px);margin-bottom:14px;box-shadow:var(--sh-md);
+  display:flex;flex-direction:column;
 }
+
+/* Palace quick-nav */
+.palace-nav{
+  display:flex;flex-wrap:wrap;gap:5px;
+  padding:10px 0 12px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:12px;
+}
+.pnav-btn{
+  font-size:.65rem;font-weight:700;
+  padding:4px 9px;border-radius:16px;
+  background:var(--bg-input);border:1px solid var(--border);
+  color:var(--t2);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+  font-family:'Noto Serif TC',serif;
+}
+.pnav-btn:hover,.pnav-btn:active{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.pnav-btn.active{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+
 .ex-hdr{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
 .ex-ico{
-  width:40px;height:40px;border-radius:11px;
+  width:42px;height:42px;border-radius:11px;
   background:var(--g-accent);
   display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;flex-shrink:0;
+  font-size:1.15rem;flex-shrink:0;
   box-shadow:0 4px 12px rgba(88,86,214,.3);
+  transition:background .3s;
 }
-.ex-title{font-family:'Noto Serif TC',serif;font-size:clamp(.9rem,4.2vw,1.18rem);font-weight:700;color:var(--t1);line-height:1.3}
-.ex-sub{font-size:.74rem;color:var(--t2);margin-top:2px;font-weight:500}
-.ex-body{font-size:clamp(.8rem,3.5vw,.94rem);line-height:1.78;color:var(--t1);border-top:1px solid var(--border);padding-top:10px}
+.ex-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(.88rem,4vw,1.15rem);
+  font-weight:700;color:var(--t1);line-height:1.3;
+}
+.ex-sub{font-size:.73rem;color:var(--t2);margin-top:2px;font-weight:500;line-height:1.5}
+
+/* keyword tags */
+.ex-tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 10px}
+.ex-tag{
+  font-size:.67rem;font-weight:700;padding:3px 9px;border-radius:16px;
+  background:rgba(88,86,214,.09);color:var(--indigo);
+  border:1px solid rgba(88,86,214,.2);letter-spacing:.02em;
+}
+.ex-tag-star{background:rgba(255,196,0,.13);color:#997700;border-color:rgba(255,196,0,.32)}
+body.dark .ex-tag-star{color:#FFD700;background:rgba(255,196,0,.15);border-color:rgba(255,196,0,.3)}
+.ex-tag-age{background:rgba(255,149,0,.11);color:var(--orange);border-color:rgba(255,149,0,.28)}
+
+/* body text area */
+.ex-body{
+  font-size:clamp(.8rem,3.4vw,.93rem);
+  color:var(--t1);
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  overflow-y:auto;
+  flex:1;
+  max-height:clamp(200px,40vh,480px);
+}
+@media(min-width:960px){.ex-body{max-height:none}}
+
+.ex-para{
+  line-height:1.82;margin-bottom:12px;
+  white-space:pre-line;
+}
+.ex-para:last-child{margin-bottom:0}
+.ex-para-first{
+  font-size:clamp(.83rem,3.5vw,.96rem);
+  font-weight:500;
+  background:var(--surface);
+  border-left:3px solid var(--indigo);
+  padding:8px 12px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;
+  margin-bottom:14px;
+}
+/* Bold 【...】 section markers */
+.ex-section{
+  display:block;
+  font-family:'Noto Serif TC',serif;
+  font-weight:700;color:var(--indigo);
+  font-size:.78rem;letter-spacing:.04em;
+  margin-bottom:4px;margin-top:2px;
+  padding:4px 8px;
+  background:rgba(88,86,214,.06);
+  border-radius:var(--r-xs);
+}
+.ex-divider{
+  border:none;border-top:1px dashed var(--border);
+  margin:12px 0;
+}
 
 /* ===================== FORMULA CARD ===================== */
 .fml-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
@@ -462,14 +539,23 @@ body.dark::after{
 
     <!-- ===== RIGHT COL: EXPLAIN CARD ===== -->
     <div class="ex-card pc-right">
+
+      <!-- Quick palace nav -->
+      <div class="palace-nav" id="palaceNav"></div>
+
       <div class="ex-hdr">
         <div class="ex-ico" id="exIco">🔮</div>
-        <div>
+        <div style="flex:1;min-width:0">
           <div class="ex-title" id="exTitle">點擊任一宮位 · 獲取解說</div>
-          <div class="ex-sub"   id="exSub">點選命盤宮格或大限年齡標籤</div>
+          <div class="ex-sub"   id="exSub">點選命盤宮格或大限年齡標籤，或點上方宮位快速查閱</div>
         </div>
       </div>
-      <div class="ex-body" id="exBody">紫微斗數以出生年月日時起十二宮，配以星曜落宮論吉凶。切換「大限盤」查看人生各十年運勢；「流年盤」查看當年四化引動與流年命宮。</div>
+      <div class="ex-tags" id="exTags"></div>
+      <div class="ex-body" id="exBody">
+        <div class="ex-para ex-para-first">紫微斗數以出生年月日時起十二宮，配以星曜落宮論吉凶。命盤包含十二個宮位，分別代表人生不同面向。</div>
+        <div class="ex-para">切換「大限盤」查看人生各十年運勢；「流年盤」可查看當年四化引動與流年命宮高亮顯示。</div>
+        <div class="ex-para">點擊任一宮格，即可獲得該宮位的星曜解說、人生建議與注意事項。亦可直接點選上方宮位快速導覽按鈕查閱各宮說明。</div>
+      </div>
     </div>
 
   </div><!-- /pc-row -->
@@ -495,21 +581,142 @@ const HUA={
   '壬':{'天梁':'祿','紫微':'權','左輔':'科','武曲':'忌'},
   '癸':{'破軍':'祿','巨門':'權','太陰':'科','貪狼':'忌'}
 };
-const DESC={
-  '命宮':'命宮代表先天個性格局。紫微＋天相同守，領導力強、行事穩重，具輔佐大局之能，人生主軸清晰，宜居高位發揮才能。',
-  '兄弟':'兄弟宮論手足同輩緣。天同性和諧，與手足感情融洽，惟需防依賴性過強，彼此互助則吉。',
-  '夫妻':'夫妻宮論感情模式。天梁為蔭星入宮，配偶可能年長或富包容力，感情穩定為重，緣分宜順勢而為。',
-  '子女':'子女宮論晚輩緣分。太陰柔和入宮，子女個性溫柔內斂，教養需多給予陪伴與情感支持。',
-  '財帛':'財帛宮主財運理財。天府為庫星，守財能力佳，財源穩定可期，適合保守穩健投資策略，積累為宜。',
-  '疾厄':'疾厄宮對應身體健康。廉貞＋破軍同守，體質變化幅度大，需留意意外傷害與手術血光，定期健檢為上。',
-  '遷移':'遷移宮主外出環境。紫微＋七殺坐守，異地發展易得貴人提攜或掌權機遇，動中求財、居遠得利。',
-  '僕役':'交友宮論朋友部屬。天機＋天梁，智謀兼備但多思慮，交友宜精不宜濫，慎選合作夥伴可事半功倍。',
-  '官祿':'官祿宮主事業工作。太陽光明發散，適合公職、教育、傳播或需高曝光度之職場，宜主動積極。',
-  '田宅':'田宅宮論家產居所。武曲＋貪狼，房地產投資機會多，但需防衝動投機造成損失，宜謹慎評估。',
-  '福德':'福德宮主精神享受。天同＋太陰，福澤深厚，喜愛文藝休閒，精神生活豐富，內心平靜易感幸福。',
-  '父母':'父母宮論雙親長輩。太陽＋巨門，父母健談積極，早年家庭溝通宜多用心，長輩緣宜主動維繫。'
+/* ── 宮位完整解說資料（參考 windada 風格）── */
+const PALACE_INFO={
+  '命宮':{
+    icon:'⭐',
+    title:'命宮 — 個性・格局・一生總綱',
+    sub:'命盤十二宮之首，決定先天個性與人生走向',
+    tags:['個性','才華','健康','格局'],
+    body:`命宮是整個命盤最核心的宮位，代表一個人先天的個性、才能、外貌氣質與一生的總體格局。命宮星曜組合能揭示命主的優勢與弱點，是解讀命盤的第一步。
+
+【紫微＋天相同守】：紫微為帝王星，主貴氣與領導力；天相為印星，主輔佐、穩重、守規矩。兩星同守命宮，格局清貴，行事穩健，天生具備統御能力，適合擔任主管或領導職位。個性謹慎自重，重視名譽，不輕易妥協原則。
+
+【命盤格局提示】：命宮需搭配「官祿宮、財帛宮、遷移宮」三方四正綜合論斷，三方皆吉則格局高，事業財運皆有所成；若三方有煞忌沖破，則需留意重大決策時機。`
+  },
+  '兄弟':{
+    icon:'👥',
+    title:'兄弟宮 — 手足・同輩・人脈助力',
+    sub:'論兄弟姊妹緣分，延伸看朋友與同事關係',
+    tags:['手足緣','同輩人脈','合作'],
+    body:`兄弟宮代表與手足、同輩之間的緣分深淺與互動關係，也延伸至朋友、同事、合夥人等平輩關係。宮位吉星多則兄弟緣深、易獲同輩助力；煞忌重則手足緣薄或易生摩擦。
+
+【天同入兄弟宮】：天同屬水，性質溫和，入兄弟宮主手足感情融洽、相處輕鬆愉快。彼此之間少有嚴重衝突，以和為貴。但天同也主享樂，需防手足間過於依賴、缺乏積極互助之心。
+
+【實務提醒】：兄弟宮也可延伸看「合夥事業」的狀況——以官祿宮為命宮起算，兄弟宮即代表事業上的合夥人關係，宜留意合作對象的可靠性。`
+  },
+  '夫妻':{
+    icon:'💑',
+    title:'夫妻宮 — 感情・婚姻・配偶特質',
+    sub:'論婚姻狀況、配偶性格及感情發展',
+    tags:['婚姻','感情運','配偶特質'],
+    body:`夫妻宮是命盤中論感情婚姻最直接的宮位，可看出命主的感情模式、配偶類型，以及婚前婚後的感情走向。
+
+【天梁入夫妻宮】：天梁為蔭星，入夫妻宮主配偶較為成熟穩重，可能年長、具包容力，或帶有父母型的照顧氣質。感情中偏向尋求安全感與穩定，不追求刺激浪漫。婚後關係較能長久，但需留意雙方年齡差距帶來的觀念落差。
+
+【感情建議】：夫妻宮搭配「福德宮（看內心期待）」與「子女宮（看感情親密度）」三方參看，才能全面了解感情實況。若夫妻宮逢化忌，感情波折較多，宜加強溝通，晚婚反而較佳。`
+  },
+  '子女':{
+    icon:'👶',
+    title:'子女宮 — 子嗣・財庫・性情親密',
+    sub:'論子嗣緣分，亦主財庫與性生活態度',
+    tags:['子女緣','財庫','晚輩關係'],
+    body:`子女宮除了直接論子嗣緣分外，在紫微斗數中也同時代表「財庫」（能否守住財富）以及命主與晚輩的互動方式。
+
+【太陰入子女宮】：太陰柔和、具陰柔之美，入子女宮主子女個性溫和細膩，感情豐富，女兒緣尤佳。子女數量不會太多，但質重於量，親子關係溫暖。太陰也主財庫，代表守財能力有一定基礎，但要避免情緒性消費。
+
+【延伸意涵】：此宮也可反映命主對待下屬、學生的態度。太陰入子女宮，待人接物溫柔有耐心，是良師益友型的長輩或主管。`
+  },
+  '財帛':{
+    icon:'💰',
+    title:'財帛宮 — 財運・理財・求財方式',
+    sub:'論財富多寡、理財態度與財富來源',
+    tags:['財運','理財能力','財富格局'],
+    body:`財帛宮是命盤中直接論財運的宮位，代表命主的財富多寡、求財方式、理財習慣與對金錢的態度。財帛宮需搭配「官祿宮（財之來源）」與「福德宮（財之用途）」三方參看。
+
+【天府入財帛宮】：天府為南斗主星，是命盤中最重要的庫星之一。入財帛宮，代表守財能力佳，財富穩定積累，不易暴起暴落。適合保守型投資，如不動產、定存、長線布局，不宜短線投機。
+
+【格局分析】：天府守財帛，財源以正財為主，工作收入穩定。若三方有化祿加持，財運更佳，有堆金積玉之象；若有煞忌沖破，則需防因他人或意外導致財富損耗。`
+  },
+  '疾厄':{
+    icon:'🏥',
+    title:'疾厄宮 — 健康・體質・潛在疾病',
+    sub:'論身體健康狀況，反映先天體質強弱',
+    tags:['健康','體質','醫療'],
+    body:`疾厄宮直接對應身體健康，可推測命主的體質特徵、易患何種疾病，以及人生各階段需注意的健康問題。
+
+【廉貞＋破軍入疾厄宮】：廉貞屬火，主血氣；破軍屬水，主激烈變動。兩星同守疾厄宮，體質起伏較大，能量充沛時精力旺盛，體力透支時則易急速衰退。需特別留意血液循環、外傷、手術或意外事故，有血光之災的傾向。
+
+【保健建議】：定期健康檢查為上策，避免過度操勞或從事高風險活動。疾厄宮若逢大限或流年化忌引動，該年需格外注意身體狀況，及早就醫預防為宜。`
+  },
+  '遷移':{
+    icon:'✈️',
+    title:'遷移宮 — 外出・環境・異地發展',
+    sub:'論外出運勢、旅行、搬遷及在外際遇',
+    tags:['外出運','異地緣','貴人運'],
+    body:`遷移宮代表命主離開家鄉、外出的運勢，包含出差、旅行、搬遷、移民，以及在外部環境中遇到的人事物。遷移宮佳者，在外比在家更順，異地發展更有成就。
+
+【紫微＋七殺入遷移宮】：紫微主貴、具號令之力；七殺主果決、開創、掌權。兩星入遷移，表示命主在外地或陌生環境中反而能發揮最大能量，易得貴人提攜，也可能掌握一方大權或主導重要事務。動中求財，越跑越旺。
+
+【建議】：此命格適合外派、跨國業務、創業拓展，不宜安於一隅。遇大限行至遷移宮，正是積極開拓的好時機，應主動出擊，把握異地緣分。`
+  },
+  '僕役':{
+    icon:'🤝',
+    title:'僕役宮 — 朋友・部屬・人際緣分',
+    sub:'論朋友、同事、部屬及貴人小人之緣',
+    tags:['人際關係','貴人運','小人防範'],
+    body:`僕役宮（又稱交友宮）代表命主與朋友、同事、部屬乃至社會上形形色色眾生的緣分，反映人際關係的品質與互動模式，亦可看出容易結識何種類型的人。
+
+【天機＋天梁入僕役宮】：天機為智謀之星，天梁為蔭星，兩星入僕役，主所結交的朋友多屬聰明、有謀略、具備一定社會地位或專業的人，彼此以智識相互切磋。交友圈素質高，但天機多變，需防益友與損友難以分辨。
+
+【人際提醒】：宮有天機，友誼中變動較多，朋友可能因環境改變而疏離，宜珍惜長期穩定的友誼。交友宜精不宜濫，慎選合作對象，可事半功倍。天梁有蔭庇，部屬中可能有忠心耿耿之人，善加培養則有助力。`
+  },
+  '官祿':{
+    icon:'💼',
+    title:'官祿宮 — 事業・職涯・功名成就',
+    sub:'論事業格局、工作性質及職涯發展方向',
+    tags:['事業運','職涯','功名'],
+    body:`官祿宮（事業宮）是命盤中論事業成就的核心宮位，代表適合從事何種行業、職場表現、升遷機會與事業高度。官祿宮需搭配「命宮（個人能力）」與「財帛宮（財富連動）」三方參看。
+
+【太陽入官祿宮】：太陽為光明之星，入官祿宮主事業光明磊落，適合需要高能見度、公眾形象良好的職場，例如公職、教育、傳播媒體、能源產業、政界或需主動出擊的業務工作。個性積極主動，不畏挑戰。
+
+【事業建議】：太陽喜明亮，事業宜走到台前而非幕後。適合擔任主管或公眾人物，在明亮開放的環境中發光發熱。若太陽化祿入官祿，事業財運雙美，是出人頭地的好格局。`
+  },
+  '田宅':{
+    icon:'🏠',
+    title:'田宅宮 — 家產・居住・不動產',
+    sub:'論家庭財產、房地產運及居住環境',
+    tags:['家產','不動產','家庭環境'],
+    body:`田宅宮代表與家庭財產、居住環境、不動產相關的運勢，也可延伸看家族背景的富裕程度，以及命主一生居住環境的變化。
+
+【武曲＋貪狼入田宅宮】：武曲屬金，主財富與剛毅；貪狼屬木，主慾望與多元發展。兩星入田宅，不動產緣分頗深，投資機會多，有以房地產累積財富的潛力。但貪狼主慾，需防貪多嚼不爛，或因投機心態造成房產損失。
+
+【建議】：武曲貪狼守田宅，宜在財力穩固後再進行置產，切忌過度槓桿。若三方有化祿，則房產投資時機可把握；逢化忌沖破則需謹慎，避免在運勢低點置產或大額借貸。`
+  },
+  '福德':{
+    icon:'🎭',
+    title:'福德宮 — 精神・享受・福氣根基',
+    sub:'論精神生活品質、財富來源及祖上積德',
+    tags:['精神享受','福氣','財富來源'],
+    body:`福德宮是命盤中論「內心世界」的宮位，代表精神享受、生活品味、內在滿足感，也反映財富的來源方式（財帛宮看花錢，福德宮看進錢）以及祖上福蔭的深淺。
+
+【天同＋太陰入福德宮】：天同主快樂、和諧、享受安逸；太陰主柔美、內斂、富有情感與藝術氣質。兩星同守福德，代表此人精神生活豐富，心靈容易感到滿足，喜愛文藝、音樂、詩詞或一切能帶來美感的事物。福澤深厚，生活中小確幸不斷。
+
+【深層涵義】：福德宮佳，表示命主即使財富不是頂尖，也能感到幸福知足。此宮也主「來財方式」，天同太陰守福德，財富宜以穩定溫和的方式累積，不宜強求急就章。`
+  },
+  '父母':{
+    icon:'👨‍👩‍👦',
+    title:'父母宮 — 雙親・長輩・文書緣',
+    sub:'論與父母長輩的緣分，亦主文書契約運',
+    tags:['父母緣','長輩關係','文書運'],
+    body:`父母宮直接論與雙親、長輩之間的緣分深淺與互動關係，也延伸至與上司、師長、政府機關的往來，以及文書、契約、考試、學歷相關事務。
+
+【太陽＋巨門入父母宮】：太陽主光明積極；巨門主口才、溝通、是非。兩星入父母宮，父母個性直率健談，有主見，家中言語互動頻繁。早年親子溝通需多加用心，避免言語摩擦演變為嫌隙。
+
+【文書提醒】：巨門入父母宮，文書、契約事項需仔細閱讀，避免因疏忽口頭承諾或合約細節引發糾紛。考試運方面，太陽入父母宮有加分效果，適合在明亮積極的學習環境中發揮潛力，利於公職或正規學歷考試。`
+  }
 };
-const ICON={'命宮':'⭐','兄弟':'👥','夫妻':'💑','子女':'👶','財帛':'💰','疾厄':'🏥','遷移':'✈️','僕役':'🤝','官祿':'💼','田宅':'🏠','福德':'🎭','父母':'👨‍👩‍👦'};
+const ICON=Object.fromEntries(Object.entries(PALACE_INFO).map(([k,v])=>[k,v.icon]));
 
 /* Palace grid positions (1-indexed row, col in 4×4) */
 const PALACES=[
@@ -582,19 +789,118 @@ function buildGrid(){
 function onCell(p,el){
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
-  const stars=p.s.map(s=>s.v).join('、');
-  setEx(ICON[p.n]||'🏯',`${p.n}宮（${p.z}）`,`主星：${stars||'無主星'}  ╱  大限：${p.a}歲`,DESC[p.n]||'此宮位星曜需綜合三方四正參看。');
+  const info=PALACE_INFO[p.n];
+  // update palace nav active state
+  document.querySelectorAll('.pnav-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.palace===p.n);
+  });
+  if(info){
+    setEx(info.icon, info.title, info.sub, info.body, info.tags, p.s.map(s=>s.v).join('、'), p.a);
+  } else {
+    const stars=p.s.map(s=>s.v).join('、');
+    setEx('🏯',`${p.n}宮（${p.z}）`,`主星：${stars||'無主星'}  ╱  大限：${p.a}歲`,'此宮位星曜需綜合三方四正參看。',[],stars,p.a);
+  }
 }
 function onAge(p){
   const stars=p.s.map(s=>s.v).join('、');
-  setEx('⏳',`大限 ${p.a}歲（${p.n}宮）`,`行至：${p.n}  ╱  主星：${stars||'無'}`,
-    `大限走入${p.n}宮（${p.z}），此十年運勢重心在${p.n}相關事務。主星${stars}主導格局，宜把握宮位特質積極發展，並注意三方四正沖照加減分之效。`);
+  const info=PALACE_INFO[p.n];
+  document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.remove('active'));
+  setEx('⏳',
+    `大限 ${p.a}歲 ─ ${p.n}宮`,
+    `行至大限宮：${p.n}  ╱  地支：${p.z}  ╱  主星：${stars||'無'}`,
+    `大限走入${p.n}宮（${p.z}），此十年人生重心集中於${p.n}相關事務。\n\n主星【${stars||'無'}】主導此期格局，${info?info.body.slice(0,80)+'…':'宜把握宮位特質積極發展，注意三方四正沖照加減分之效。'}\n\n建議在此十年積極對應${p.n}宮所代表的人生議題，善用主星特質，謹防煞忌引動之不利時機。`,
+    ['大限運勢','十年格局'],stars,p.a);
 }
-function setEx(ico,ti,su,bo){
+function setEx(ico,ti,su,bo,tags,stars,age){
   document.getElementById('exIco').textContent=ico;
   document.getElementById('exTitle').textContent=ti;
   document.getElementById('exSub').textContent=su;
-  document.getElementById('exBody').textContent=bo;
+  // Tags
+  const tagsEl=document.getElementById('exTags');
+  tagsEl.innerHTML='';
+  if(stars){
+    const sc=document.createElement('span');
+    sc.className='ex-tag ex-tag-star';
+    sc.textContent='✦ '+stars;
+    tagsEl.appendChild(sc);
+  }
+  if(age){
+    const ac=document.createElement('span');
+    ac.className='ex-tag ex-tag-age';
+    ac.textContent='⏳ '+age+'歲';
+    tagsEl.appendChild(ac);
+  }
+  (tags||[]).forEach(t=>{
+    const tc=document.createElement('span');
+    tc.className='ex-tag';tc.textContent=t;
+    tagsEl.appendChild(tc);
+  });
+  // Body — parse 【...】 as section headers
+  const bodyEl=document.getElementById('exBody');
+  bodyEl.innerHTML='';
+  const paras=bo.split('\n\n').filter(p=>p.trim());
+  paras.forEach((para,i)=>{
+    const trimmed=para.trim();
+    if(!trimmed)return;
+    // Parse inline 【header】 : content patterns
+    const div=document.createElement('div');
+    div.className='ex-para'+(i===0?' ex-para-first':'');
+    // Check if paragraph starts with 【...】
+    const secMatch=trimmed.match(/^(【[^】]+】)(.*)$/s);
+    if(secMatch){
+      const sec=document.createElement('span');
+      sec.className='ex-section';
+      sec.textContent=secMatch[1];
+      div.appendChild(sec);
+      const rest=document.createTextNode(secMatch[2].trim());
+      div.appendChild(rest);
+    } else {
+      div.textContent=trimmed;
+    }
+    bodyEl.appendChild(div);
+    // divider between paragraphs (not last)
+    if(i<paras.length-1){
+      const hr=document.createElement('hr');
+      hr.className='ex-divider';
+      bodyEl.appendChild(hr);
+    }
+  });
+  // scroll top
+  bodyEl.scrollTop=0;
+}
+
+/* ========== PALACE NAV ========== */
+function buildPalaceNav(){
+  const nav=document.getElementById('palaceNav');
+  if(!nav)return;
+  nav.innerHTML='';
+  const order=['命宮','兄弟','夫妻','子女','財帛','疾厄','遷移','僕役','官祿','田宅','福德','父母'];
+  order.forEach(name=>{
+    const info=PALACE_INFO[name];
+    const btn=document.createElement('button');
+    btn.className='pnav-btn';
+    btn.dataset.palace=name;
+    btn.textContent=(info?info.icon:'')+' '+name;
+    btn.onclick=()=>{
+      // find matching palace and trigger explain
+      const p=PALACES.find(x=>x.n===name);
+      if(p){
+        // deselect all cells, then show info
+        document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+        // find cell by palace name and select
+        document.querySelectorAll('.cell').forEach(c=>{
+          if(c.dataset.n===name){
+            c.classList.add('sel');
+            c.scrollIntoView({behavior:'smooth',block:'nearest'});
+          }
+        });
+        document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.toggle('active',b===btn));
+        const info2=PALACE_INFO[name];
+        if(info2) setEx(info2.icon,info2.title,info2.sub,info2.body,info2.tags,p.s.map(s=>s.v).join('、'),p.a);
+      }
+    };
+    nav.appendChild(btn);
+  });
 }
 
 /* ========== ANNUAL ========== */
@@ -714,7 +1020,7 @@ btnTh.onclick=()=>setTheme(!document.body.classList.contains('dark'));
   if(th!==null)setTheme(th==='1');
   else if(window.matchMedia('(prefers-color-scheme:dark)').matches)setTheme(true);
 
-  buildGrid();initYears();
+  buildGrid();initYears();buildPalaceNav();
 
   const d=load();
   if(d){
