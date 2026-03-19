@@ -2,832 +2,441 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>紫微斗數 · 命盤</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== RESET ===== */
+/* ===================== RESET ===================== */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
 
-/* ===== CSS VARIABLES ===== */
-:root {
-  /* Light Mode */
-  --bg: #F2F1F6;
-  --bg2: #FFFFFF;
-  --bg3: rgba(255,255,255,0.72);
-  --surface: rgba(255,255,255,0.85);
-  --surface2: rgba(242,241,246,0.9);
-  --border: rgba(0,0,0,0.08);
-  --border2: rgba(0,0,0,0.04);
-  --text1: #1A1A2E;
-  --text2: #6E6E80;
-  --text3: #9898A8;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-  --shadow-lg: 0 20px 60px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
-  --blur: blur(24px) saturate(180%);
-
-  /* Accent Palette */
-  --indigo: #5856D6;
-  --blue: #007AFF;
-  --cyan: #32ADE6;
-  --teal: #30B0C7;
-  --green: #34C759;
-  --yellow: #FFCC00;
-  --orange: #FF9500;
-  --pink: #FF2D55;
-  --red: #FF3B30;
-  --purple: #AF52DE;
-  --rose: #FF375F;
-
-  /* Star colors */
-  --star-main: #FF3B30;
-  --star-minor: #1A1A2E;
-  --star-lucky: #007AFF;
-
-  /* Gradient */
-  --grad-header: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-  --grad-accent: linear-gradient(135deg,#007AFF 0%,#5856D6 100%);
-  --grad-warm: linear-gradient(135deg,#FF9500 0%,#FF3B30 100%);
-
-  --radius-sm: 12px;
-  --radius-md: 20px;
-  --radius-lg: 28px;
-  --radius-xl: 36px;
+/* ===================== TOKENS ===================== */
+:root{
+  --bg:#EFEFF4;
+  --bg-card:rgba(255,255,255,0.88);
+  --bg-input:rgba(255,255,255,0.96);
+  --bg-cell:rgba(255,255,255,0.76);
+  --surface:rgba(255,255,255,0.6);
+  --border:rgba(0,0,0,0.09);
+  --t1:#17172A;--t2:#636375;--t3:#AAAAB8;
+  --blur:blur(20px) saturate(160%);
+  --sh-xs:0 1px 4px rgba(0,0,0,0.06);
+  --sh-sm:0 4px 12px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);
+  --sh-md:0 10px 30px rgba(0,0,0,0.09),0 2px 6px rgba(0,0,0,0.05);
+  --sh-lg:0 20px 56px rgba(0,0,0,0.11),0 4px 10px rgba(0,0,0,0.06);
+  --indigo:#5856D6;--blue:#007AFF;--green:#34C759;
+  --orange:#FF9500;--red:#FF3B30;--purple:#AF52DE;
+  --g-header:linear-gradient(130deg,#5856D6 0%,#AF52DE 100%);
+  --g-accent:linear-gradient(130deg,#007AFF 0%,#5856D6 100%);
+  --g-warm:linear-gradient(130deg,#FF9500 0%,#FF3B30 100%);
+  --r-sm:12px;--r-md:18px;--r-lg:24px;--r-xl:32px;
+  --s-main:#FF3B30;--s-blue:#007AFF;--s-dark:#17172A;
+}
+body.dark{
+  --bg:#0D0D1A;--bg-card:rgba(22,22,36,0.90);--bg-input:rgba(28,28,44,0.96);
+  --bg-cell:rgba(26,26,42,0.80);--surface:rgba(34,34,52,0.65);
+  --border:rgba(255,255,255,0.09);
+  --t1:#EDEDFF;--t2:#9090B0;--t3:#50506A;
+  --sh-xs:0 1px 4px rgba(0,0,0,0.4);--sh-sm:0 4px 12px rgba(0,0,0,0.45);
+  --sh-md:0 10px 30px rgba(0,0,0,0.55);--sh-lg:0 20px 56px rgba(0,0,0,0.65);
+  --indigo:#7977F5;--blue:#0A84FF;--green:#32D74B;
+  --orange:#FF9F0A;--red:#FF453A;--purple:#BF5AF2;
+  --s-dark:#DDDDF5;
 }
 
-body.dark {
-  --bg: #0C0C14;
-  --bg2: #1C1C24;
-  --bg3: rgba(28,28,36,0.85);
-  --surface: rgba(36,36,48,0.9);
-  --surface2: rgba(48,48,64,0.8);
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.04);
-  --text1: #F0F0FF;
-  --text2: #9898B8;
-  --text3: #6060808;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.2);
-  --shadow-lg: 0 20px 60px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3);
-  --star-minor: #E8E8FF;
-  --indigo: #7877F0;
-  --blue: #0A84FF;
-  --green: #32D74B;
-  --orange: #FF9F0A;
-  --red: #FF453A;
-  --purple: #BF5AF2;
-  --pink: #FF375F;
+/* ===================== BASE ===================== */
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',-apple-system,BlinkMacSystemFont,'PingFang TC','Microsoft JhengHei',sans-serif;
+  background:var(--bg);color:var(--t1);min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .4s,color .4s;overflow-x:hidden;
 }
-
-/* ===== BASE ===== */
-html { font-size: 16px; scroll-behavior: smooth; }
-body {
-  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text1);
-  line-height: 1.5;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.35s, color 0.35s;
-}
-
-/* ===== DECORATIVE BG ===== */
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(88,86,214,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 35% at 80% 80%, rgba(0,122,255,0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 30% at 60% 30%, rgba(175,82,222,0.08) 0%, transparent 50%);
+    radial-gradient(ellipse 55% 40% at 15% 8%,rgba(88,86,214,.12) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 32% at 85% 85%,rgba(0,122,255,.09) 0%,transparent 60%),
+    radial-gradient(ellipse 38% 28% at 58% 28%,rgba(175,82,222,.08) 0%,transparent 55%);
 }
-body.dark::before {
+body.dark::after{
   background:
-    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(120,119,240,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 35% at 80% 80%, rgba(10,132,255,0.15) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 30% at 60% 30%, rgba(191,90,242,0.12) 0%, transparent 50%);
+    radial-gradient(ellipse 55% 40% at 15% 8%,rgba(121,119,245,.22) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 32% at 85% 85%,rgba(10,132,255,.17) 0%,transparent 60%),
+    radial-gradient(ellipse 38% 28% at 58% 28%,rgba(191,90,242,.14) 0%,transparent 55%);
 }
 
-/* ===== WRAPPER ===== */
-.wrapper {
-  position: relative;
-  z-index: 1;
-  max-width: 540px;
-  margin: 0 auto;
-  padding: 20px 16px 48px;
+/* ===================== APP WRAPPER ===================== */
+#app{
+  position:relative;z-index:1;
+  max-width:560px;margin:0 auto;
+  padding:clamp(14px,4vw,28px) clamp(12px,4vw,20px) 60px;
+}
+/* PC two-col layout */
+@media(min-width:900px){
+  body{display:grid;place-items:start center}
+  #app{max-width:820px;width:100%}
+  .pc-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .pc-full{grid-column:1/-1}
 }
 
-/* ===== HEADER ===== */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  gap: 12px;
+/* ===================== GLASS CARD ===================== */
+.card{
+  background:var(--bg-card);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:clamp(14px,3.5vw,22px) clamp(13px,3.5vw,20px);
+  box-shadow:var(--sh-md);margin-bottom:14px;
+  transition:background .4s,border-color .4s;
 }
-.app-title-group { flex: 1; }
-.app-subtitle {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--indigo);
-  margin-bottom: 4px;
+.card-lbl{
+  display:flex;align-items:center;gap:7px;
+  font-size:.7rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t2);margin-bottom:13px;
 }
-.app-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.6rem, 7vw, 2.2rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  background: var(--grad-header);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
+.card-lbl i{width:7px;height:7px;border-radius:50%;background:var(--indigo);flex-shrink:0}
+
+/* ===================== HEADER ===================== */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.hdr-eyebrow{font-size:.67rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:3px}
+.hdr-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(1.45rem,5.5vw,2rem);
+  font-weight:900;letter-spacing:-.02em;line-height:1.1;
+  background:var(--g-header);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.btn-theme{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--bg-card);backdrop-filter:var(--blur);
+  border:1px solid var(--border);box-shadow:var(--sh-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;cursor:pointer;flex-shrink:0;
+  transition:transform .2s,background .3s;
+}
+.btn-theme:active{transform:scale(.88)}
+
+/* ===================== FORM ===================== */
+.form-row{display:grid;grid-template-columns:1.55fr 1fr;gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:.69rem;font-weight:700;color:var(--t2);letter-spacing:.06em}
+.field input,.field select{
+  width:100%;padding:12px 13px;
+  background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--r-md);
+  font-family:'Noto Sans TC',sans-serif;font-size:clamp(.87rem,3.8vw,.99rem);
+  color:var(--t1);outline:none;-webkit-appearance:none;appearance:none;
+  transition:border-color .2s,box-shadow .2s,background .4s;
+}
+.field input:focus,.field select:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(88,86,214,.16)}
+.sel-w{position:relative}
+.sel-w::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t2);font-size:.82rem;pointer-events:none}
+.hist-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.hist-chip{
+  font-size:.7rem;font-weight:600;padding:3px 9px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;color:var(--indigo);cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.hist-chip:active{background:var(--indigo);color:#fff}
+.btn-submit{
+  width:100%;margin-top:12px;padding:14px;
+  background:var(--g-accent);border-radius:var(--r-lg);
+  font-size:clamp(.88rem,3.8vw,.99rem);font-weight:700;color:#fff;
+  box-shadow:0 5px 18px rgba(88,86,214,.36);letter-spacing:.04em;
+  position:relative;overflow:hidden;transition:opacity .15s,transform .15s;
+}
+.btn-submit::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.13) 0%,transparent 55%);pointer-events:none}
+.btn-submit:active{opacity:.82;transform:scale(.98)}
+
+/* ===================== TABS ===================== */
+.tabs{
+  display:flex;background:var(--bg-card);backdrop-filter:var(--blur);
+  border:1px solid var(--border);border-radius:48px;
+  padding:4px;margin-bottom:11px;box-shadow:var(--sh-xs);
+}
+.tab{
+  flex:1;text-align:center;padding:9px 6px;border-radius:44px;
+  font-size:clamp(.8rem,3.5vw,.95rem);font-weight:600;
+  color:var(--t2);cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);letter-spacing:.02em;
+}
+.tab.on{background:var(--bg-input);color:var(--indigo);box-shadow:var(--sh-xs);transform:scale(1.02)}
+
+/* ===================== YEAR BAR ===================== */
+.yr-bar{
+  display:none;align-items:center;gap:9px;flex-wrap:wrap;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:10px 14px;
+  margin-bottom:11px;box-shadow:var(--sh-xs);
+}
+.yr-bar.show{display:flex}
+.yr-bar label{font-size:.76rem;font-weight:700;color:var(--t2);white-space:nowrap}
+.yr-bar select{
+  flex:1;min-width:130px;padding:8px 12px;
+  background:var(--bg-input);border:1.5px solid var(--border);border-radius:22px;
+  font-family:'Noto Sans TC',sans-serif;font-size:.88rem;
+  color:var(--t1);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;
 }
 
-/* Theme toggle */
-.theme-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.2s, background 0.3s;
-}
-.theme-btn:active { transform: scale(0.9); }
-
-/* ===== CARD ===== */
-.card {
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 22px 20px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 16px;
-  transition: background 0.35s, border-color 0.35s;
-}
-.card-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text2);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.card-label .dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--grad-accent);
-  background: var(--indigo);
-  display: inline-block;
+/* ===================== CHART WRAP ===================== */
+.chart-wrap{
+  background:var(--bg-card);backdrop-filter:var(--blur);
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:clamp(6px,2vw,12px);box-shadow:var(--sh-lg);margin-bottom:14px;
 }
 
-/* ===== FORM ===== */
-.form-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; margin-bottom: 12px; }
-.form-field { display: flex; flex-direction: column; gap: 5px; }
-.form-field label { font-size: 0.72rem; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; }
-.form-field input,
-.form-field select {
-  width: 100%;
-  padding: 13px 15px;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: clamp(0.9rem, 4vw, 1rem);
-  color: var(--text1);
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
-}
-.form-field input:focus,
-.form-field select:focus {
-  border-color: var(--indigo);
-  box-shadow: 0 0 0 3px rgba(88,86,214,0.15);
+/* ---- 4×4 GRID — square, fluid ---- */
+.grid4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:repeat(4,1fr);
+  gap:clamp(3px,1.2vw,7px);
+  /* force square */
+  width:100%;
+  aspect-ratio:1/1;
 }
 
-/* Select arrow */
-.select-wrap { position: relative; }
-.select-wrap::after {
-  content: '›';
-  position: absolute;
-  right: 14px; top: 50%;
-  transform: translateY(-50%) rotate(90deg);
-  color: var(--text2);
-  font-size: 1.1rem;
-  pointer-events: none;
+/* CELL */
+.cell{
+  background:var(--bg-cell);
+  border:1px solid var(--border);
+  border-radius:clamp(6px,1.5vw,11px);
+  display:flex;flex-direction:column;
+  justify-content:space-between;align-items:stretch;
+  position:relative;overflow:hidden;cursor:pointer;
+  /* fluid inner padding */
+  padding:clamp(3px,1vw,8px) clamp(2px,.7vw,5px) clamp(2px,.8vw,6px);
+  transition:transform .15s,border-color .2s,background .2s,box-shadow .2s;
+}
+.cell::before{
+  content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(170deg,rgba(255,255,255,.07) 0%,transparent 55%);
+}
+.cell:active{transform:scale(.93)}
+.cell.sel{border-color:var(--indigo);background:rgba(88,86,214,.07);box-shadow:0 0 0 2px rgba(88,86,214,.2),var(--sh-xs)}
+.cell.ann{border-color:var(--orange);background:rgba(255,149,0,.07);box-shadow:0 0 0 2px rgba(255,149,0,.2)}
+
+/* STARS AREA — horizontal row of vertical text */
+.stars-area{
+  display:flex;flex-direction:row;flex-wrap:wrap;
+  justify-content:center;align-items:flex-start;
+  gap:clamp(1px,.4vw,3px);
+  flex:1;overflow:hidden;
+  padding:clamp(1px,.4vw,3px) clamp(1px,.4vw,3px) 0;
+}
+.star{
+  font-family:'Noto Serif TC',serif;font-weight:700;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  line-height:1.1;color:var(--s-dark);position:relative;
+  /* true fluid: scales with 25% cell width = 6.25% viewport width */
+  font-size:clamp(.5rem,1.7vw,.84rem);
+  flex-shrink:0;
+}
+.star.m{color:var(--s-main)}
+.star.b{color:var(--s-blue)}
+
+/* hua badge */
+.hb{
+  position:absolute;top:-1px;right:-5px;
+  writing-mode:horizontal-tb;transform:rotate(0);
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:clamp(.36rem,.85vw,.5rem);font-weight:800;
+  padding:1px 2px;border-radius:3px;line-height:1.2;
+  white-space:nowrap;pointer-events:none;
+}
+.hb.lu{background:var(--green);color:#fff}
+.hb.quan{background:var(--blue);color:#fff}
+.hb.ke{background:var(--purple);color:#fff}
+.hb.ji{background:var(--red);color:#fff}
+
+/* PALACE NAME PILL */
+.pname{
+  font-size:clamp(.48rem,1.65vw,.8rem);
+  font-weight:700;background:var(--g-accent);color:#fff;
+  text-align:center;border-radius:18px;
+  padding:clamp(1px,.4vw,3px) clamp(2px,.5vw,4px);
+  margin:clamp(2px,.5vw,4px) clamp(2px,.5vw,4px) 0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:.01em;
 }
 
-/* Datalist autocomplete hint */
-.hint-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 6px;
-}
-.hint-chip {
-  font-size: 0.72rem;
-  padding: 4px 10px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  color: var(--indigo);
-  cursor: pointer;
-  transition: background 0.15s;
-  font-weight: 500;
-}
-.hint-chip:active { background: var(--indigo); color: #fff; }
-
-/* ===== SUBMIT BTN ===== */
-.btn-submit {
-  width: 100%;
-  padding: 16px;
-  background: var(--grad-accent);
-  border: none;
-  border-radius: var(--radius-lg);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(88,86,214,0.35);
-  margin-top: 14px;
-  letter-spacing: 0.04em;
-  position: relative;
-  overflow: hidden;
-  transition: opacity 0.15s, transform 0.15s;
-}
-.btn-submit::before {
-  content:'';
-  position:absolute;
-  inset:0;
-  background: linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%);
-}
-.btn-submit:active { opacity: 0.85; transform: scale(0.98); }
-
-/* ===== TAB BAR ===== */
-.tab-bar {
-  display: flex;
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  padding: 4px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-.tab {
-  flex: 1;
-  text-align: center;
-  padding: 10px 8px;
-  font-size: clamp(0.82rem, 3.8vw, 1rem);
-  font-weight: 600;
-  border-radius: 46px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  letter-spacing: 0.02em;
-}
-.tab.active {
-  background: var(--bg2);
-  color: var(--indigo);
-  box-shadow: var(--shadow-sm);
-  transform: scale(1.02);
+/* BRANCH */
+.zhi{
+  position:absolute;bottom:clamp(2px,.5vw,4px);left:clamp(3px,.7vw,6px);
+  font-size:clamp(.38rem,1.2vw,.62rem);font-weight:700;
+  color:var(--t3);background:rgba(128,128,160,.11);
+  padding:0 clamp(2px,.4vw,4px);border-radius:18px;
 }
 
-/* ===== YEAR SELECTOR ===== */
-.year-bar {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 12px 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-.year-bar.show { display: flex; }
-.year-bar label { font-size: 0.8rem; font-weight: 600; color: var(--text2); white-space: nowrap; }
-.year-bar select {
-  flex: 1;
-  padding: 9px 14px;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 30px;
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 0.95rem;
-  color: var(--text1);
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
+/* AGE TAG */
+.age{
+  position:absolute;top:clamp(2px,.5vw,4px);right:clamp(2px,.5vw,5px);
+  font-size:clamp(.34rem,1.1vw,.56rem);font-weight:700;
+  background:var(--g-warm);color:#fff;
+  padding:0 clamp(2px,.4vw,4px);border-radius:18px;
+  white-space:nowrap;line-height:1.4;cursor:pointer;
 }
 
-/* ===== CHART GRID ===== */
-.chart-wrap {
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 14px;
-  box-shadow: var(--shadow-lg);
-  margin-bottom: 16px;
-  position: relative;
+/* CENTER */
+.center{
+  grid-column:2/4;grid-row:2/4;
+  background:var(--bg-card);
+  border:1.5px dashed rgba(88,86,214,.36);
+  border-radius:clamp(8px,2vw,16px);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;gap:clamp(2px,.8vw,6px);
+  padding:clamp(5px,1.5vw,12px) clamp(4px,1.2vw,8px);
 }
+.c-name{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(.8rem,3.5vw,1.4rem);
+  font-weight:900;line-height:1.2;word-break:break-all;
+  background:var(--g-accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.c-detail{font-size:clamp(.55rem,1.9vw,.78rem);color:var(--t2);font-weight:600}
+.c-badges{display:flex;flex-wrap:wrap;gap:clamp(2px,.6vw,4px);justify-content:center}
+.cbadge{
+  font-size:clamp(.42rem,1.2vw,.6rem);font-weight:700;
+  padding:clamp(1px,.3vw,2px) clamp(3px,.8vw,7px);
+  border-radius:18px;border:1px solid;letter-spacing:.02em;
+}
+.cb-i{color:var(--indigo);border-color:rgba(88,86,214,.35);background:rgba(88,86,214,.09)}
+.cb-o{color:var(--orange);border-color:rgba(255,149,0,.35);background:rgba(255,149,0,.09)}
+.cb-g{color:var(--green);border-color:rgba(52,199,89,.35);background:rgba(52,199,89,.09)}
 
-.chart-grid {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 7px;
+/* ===================== EXPLAIN CARD ===================== */
+.ex-card{
+  background:var(--bg-card);backdrop-filter:var(--blur);
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:clamp(14px,3.5vw,20px);margin-bottom:14px;box-shadow:var(--sh-md);
 }
+.ex-hdr{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
+.ex-ico{
+  width:40px;height:40px;border-radius:11px;
+  background:var(--g-accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(88,86,214,.3);
+}
+.ex-title{font-family:'Noto Serif TC',serif;font-size:clamp(.9rem,4.2vw,1.18rem);font-weight:700;color:var(--t1);line-height:1.3}
+.ex-sub{font-size:.74rem;color:var(--t2);margin-top:2px;font-weight:500}
+.ex-body{font-size:clamp(.8rem,3.5vw,.94rem);line-height:1.78;color:var(--t1);border-top:1px solid var(--border);padding-top:10px}
 
-/* Palace cells */
-.cell {
-  background: var(--bg3);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 9px 5px 7px;
-  aspect-ratio: 1 / 1.12;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.2s;
-}
-.cell::before {
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius: inherit;
-  background: linear-gradient(180deg,rgba(255,255,255,0.06) 0%,transparent 60%);
-  pointer-events:none;
-}
-.cell:active { transform: scale(0.96); }
-.cell.selected {
-  border-color: var(--indigo);
-  background: rgba(88,86,214,0.08);
-  box-shadow: 0 0 0 2px rgba(88,86,214,0.25), var(--shadow-sm);
-}
-.cell.annual-hi {
-  border-color: var(--orange);
-  background: rgba(255,149,0,0.08);
-  box-shadow: 0 0 0 2px rgba(255,149,0,0.25);
-}
+/* ===================== FORMULA CARD ===================== */
+.fml-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.fml-item{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px}
+.fml-lbl{font-size:.68rem;font-weight:700;color:var(--t2);letter-spacing:.07em;margin-bottom:3px}
+.fml-val{font-family:'Noto Serif TC',serif;font-size:clamp(.98rem,4.2vw,1.36rem);font-weight:700;color:var(--indigo);line-height:1.2}
+.fml-unit{font-size:.72rem;color:var(--t2);margin-left:2px;font-weight:400}
+.sh-box{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px}
+.sh-ttl{font-size:.68rem;font-weight:700;letter-spacing:.09em;color:var(--t2);text-transform:uppercase;margin-bottom:8px}
+.sh-chips{display:flex;flex-wrap:wrap;gap:6px}
+.shc{font-family:'Noto Serif TC',serif;font-size:clamp(.76rem,3.2vw,.92rem);font-weight:700;padding:5px 11px;border-radius:22px}
+.shc-lu  {background:rgba(52,199,89,.13); color:var(--green); border:1px solid rgba(52,199,89,.3)}
+.shc-quan{background:rgba(0,122,255,.11);  color:var(--blue);  border:1px solid rgba(0,122,255,.25)}
+.shc-ke  {background:rgba(175,82,222,.11); color:var(--purple);border:1px solid rgba(175,82,222,.25)}
+.shc-ji  {background:rgba(255,59,48,.11);  color:var(--red);   border:1px solid rgba(255,59,48,.25)}
 
-/* Stars */
-.stars {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1px 3px;
-  padding: 0 2px;
-}
-.star {
-  writing-mode: vertical-rl;
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(0.62rem, 3vw, 0.9rem);
-  font-weight: 700;
-  transform: rotate(180deg);
-  color: var(--star-minor);
-  line-height: 1.15;
-  position: relative;
-}
-.star.main { color: var(--star-main); }
-.star.lucky { color: var(--blue); }
+/* ===================== FOOTER ===================== */
+.foot{text-align:center;font-size:.69rem;color:var(--t3);margin-top:20px;border-top:1px solid var(--border);padding-top:13px;line-height:1.8}
 
-/* Hua tag on star */
-.hua-tag {
-  position: absolute;
-  top: -10px; right: -7px;
-  font-family: 'Noto Sans TC', sans-serif;
-  writing-mode: horizontal-tb;
-  transform: rotate(0deg);
-  font-size: 0.48rem;
-  font-weight: 800;
-  padding: 1px 3px;
-  border-radius: 4px;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-.hua-tag.lu { background: var(--green); color:#fff; }
-.hua-tag.quan { background: var(--blue); color:#fff; }
-.hua-tag.ke { background: var(--purple); color:#fff; }
-.hua-tag.ji { background: var(--red); color:#fff; }
-
-/* Palace name label */
-.palace-name {
-  font-size: clamp(0.6rem, 2.8vw, 0.82rem);
-  font-weight: 700;
-  background: var(--grad-accent);
-  color: #fff;
-  text-align: center;
-  border-radius: 30px;
-  padding: 3px 4px;
-  margin: 5px 4px 0;
-  letter-spacing: 0.04em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Branch (地支) */
-.branch {
-  position: absolute;
-  bottom: 4px; left: 6px;
-  font-size: clamp(0.48rem, 2.2vw, 0.68rem);
-  color: var(--text3);
-  background: var(--surface2);
-  padding: 1px 5px;
-  border-radius: 20px;
-  font-weight: 600;
-}
-
-/* Age tag */
-.age-tag {
-  position: absolute;
-  top: 5px; right: 5px;
-  font-size: clamp(0.44rem, 2vw, 0.62rem);
-  font-weight: 700;
-  background: var(--grad-warm);
-  color: #fff;
-  padding: 2px 5px;
-  border-radius: 20px;
-  cursor: pointer;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-/* ===== CENTER CELL ===== */
-.center {
-  grid-column: 2/4;
-  grid-row: 2/4;
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1.5px dashed rgba(88,86,214,0.4);
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 12px 8px;
-  box-shadow: inset 0 0 0 1px var(--border2);
-  aspect-ratio: auto;
-}
-.center-name {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.1rem, 6vw, 1.9rem);
-  font-weight: 900;
-  background: var(--grad-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.2;
-  word-break: break-all;
-}
-.center-detail {
-  font-size: clamp(0.68rem, 3.2vw, 0.88rem);
-  color: var(--text2);
-  margin-top: 6px;
-  font-weight: 500;
-}
-.center-badges {
-  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;
-  margin-top: 8px;
-}
-.badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 20px;
-  border: 1px solid;
-  letter-spacing: 0.04em;
-}
-.badge-indigo { color: var(--indigo); border-color: rgba(88,86,214,0.35); background: rgba(88,86,214,0.08); }
-.badge-orange { color: var(--orange); border-color: rgba(255,149,0,0.35); background: rgba(255,149,0,0.08); }
-.badge-green  { color: var(--green);  border-color: rgba(52,199,89,0.35);  background: rgba(52,199,89,0.08); }
-
-/* ===== EXPLAIN BOX ===== */
-.explain-card {
-  background: var(--surface);
-  backdrop-filter: var(--blur);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s;
-}
-.explain-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.explain-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  background: var(--grad-accent);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(88,86,214,0.3);
-}
-.explain-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1rem, 5vw, 1.3rem);
-  font-weight: 700;
-  color: var(--text1);
-  line-height: 1.3;
-}
-.explain-sub {
-  font-size: 0.78rem;
-  color: var(--text2);
-  margin-top: 2px;
-  font-weight: 500;
-}
-.explain-text {
-  font-size: clamp(0.85rem, 3.8vw, 1rem);
-  line-height: 1.7;
-  color: var(--text1);
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-
-/* ===== FORMULA SECTION ===== */
-.formula-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.formula-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px 15px;
-  transition: background 0.3s;
-}
-.formula-item .f-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text2);
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-.formula-item .f-value {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.1rem, 5vw, 1.5rem);
-  font-weight: 700;
-  color: var(--indigo);
-  line-height: 1.2;
-}
-.formula-item .f-unit {
-  font-size: 0.75rem;
-  color: var(--text2);
-  margin-left: 3px;
-  font-weight: 400;
-}
-
-/* SiHua display */
-.sihua-box {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px 15px;
-}
-.sihua-title {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--text2);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-.sihua-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-.sihua-chip {
-  font-size: clamp(0.8rem, 3.5vw, 0.95rem);
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 30px;
-  font-family: 'Noto Serif TC', serif;
-  letter-spacing: 0.03em;
-}
-.chip-lu   { background: rgba(52,199,89,0.15);  color: var(--green);  border: 1px solid rgba(52,199,89,0.3); }
-.chip-quan { background: rgba(0,122,255,0.12);   color: var(--blue);   border: 1px solid rgba(0,122,255,0.25); }
-.chip-ke   { background: rgba(175,82,222,0.12);  color: var(--purple); border: 1px solid rgba(175,82,222,0.25); }
-.chip-ji   { background: rgba(255,59,48,0.12);   color: var(--red);    border: 1px solid rgba(255,59,48,0.25); }
-
-/* ===== FOOTER ===== */
-.footer {
-  text-align: center;
-  font-size: 0.72rem;
-  color: var(--text3);
-  margin-top: 24px;
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
-  line-height: 1.7;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.card, .chart-wrap, .explain-card, .tab-bar {
-  animation: fadeIn 0.4s ease both;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 360px) {
-  .cell { padding: 6px 3px 5px; }
-  .stars { gap: 0 2px; }
-}
-@media (prefers-color-scheme: dark) {
-  :root:not(.light-forced) { /* let JS handle it */ }
-}
+/* ===================== ANIM ===================== */
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card,.chart-wrap,.ex-card,.tabs{animation:up .36s ease both}
 </style>
 </head>
 <body>
-<div class="wrapper">
-
+<div id="app">
   <!-- HEADER -->
-  <div class="app-header">
-    <div class="app-title-group">
-      <div class="app-subtitle">紫微命理 · 命盤系統</div>
-      <div class="app-title">紫微斗數</div>
+  <header class="hdr">
+    <div>
+      <div class="hdr-eyebrow">紫微命理 · 命盤系統</div>
+      <div class="hdr-title">紫微斗數</div>
     </div>
-    <button class="theme-btn" id="themeBtn" aria-label="切換主題">🌙</button>
-  </div>
+    <button class="btn-theme" id="btnTheme">🌙</button>
+  </header>
 
-  <!-- INPUT CARD -->
-  <div class="card">
-    <div class="card-label"><span class="dot"></span>填入出生資料</div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>姓名</label>
-        <input type="text" id="userName" placeholder="陳致遠" autocomplete="name" list="name-history">
-        <datalist id="name-history"></datalist>
-        <div class="hint-chips" id="nameHints"></div>
-      </div>
-      <div class="form-field">
-        <label>性別</label>
-        <div class="select-wrap">
-          <select id="userGender">
-            <option value="male">乾造 男</option>
-            <option value="female">坤造 女</option>
-          </select>
+  <div class="pc-row">
+
+    <!-- ===== INPUT CARD ===== -->
+    <div class="card pc-full">
+      <div class="card-lbl"><i></i>填入出生資料</div>
+      <div class="form-row">
+        <div class="field">
+          <label>姓名</label>
+          <input id="iName" type="text" placeholder="陳致遠" autocomplete="off">
+          <div class="hist-row" id="histRow"></div>
+        </div>
+        <div class="field">
+          <label>性別</label>
+          <div class="sel-w"><select id="iGender"><option value="m">乾造 男</option><option value="f">坤造 女</option></select></div>
         </div>
       </div>
+      <div class="field">
+        <label>出生時間（公曆）</label>
+        <input id="iBirth" type="datetime-local">
+      </div>
+      <button class="btn-submit" id="btnSub">✦ 更新命盤 · 記憶</button>
     </div>
-    <div class="form-field">
-      <label>出生時間（公曆）</label>
-      <input type="datetime-local" id="userBirth">
+
+    <!-- ===== CHART COLUMN ===== -->
+    <div class="pc-full">
+      <div class="tabs">
+        <div class="tab on" data-m="base"   onclick="switchTab(this)">本命盤</div>
+        <div class="tab"    data-m="decade" onclick="switchTab(this)">大限盤</div>
+        <div class="tab"    data-m="annual" onclick="switchTab(this)">流年盤</div>
+      </div>
+      <div class="yr-bar" id="yrBar">
+        <label>📅 流年：</label>
+        <select id="selYear" onchange="applyAnnual()"></select>
+      </div>
+      <div class="chart-wrap">
+        <div class="grid4" id="grid"></div>
+      </div>
     </div>
-    <button class="btn-submit" onclick="submitChart()">✦ 更新命盤 &amp; 記憶</button>
-  </div>
 
-  <!-- TAB BAR -->
-  <div class="tab-bar">
-    <div class="tab active" data-mode="base" onclick="switchTab(this)">本命盤</div>
-    <div class="tab" data-mode="decade" onclick="switchTab(this)">大限盤</div>
-    <div class="tab" data-mode="annual" onclick="switchTab(this)">流年盤</div>
-  </div>
-
-  <!-- YEAR SELECTOR -->
-  <div class="year-bar" id="yearBar">
-    <label>📅 流年年份：</label>
-    <select id="annualYear" onchange="applyAnnual()"></select>
-  </div>
-
-  <!-- CHART 4×4 -->
-  <div class="chart-wrap">
-    <div class="chart-grid" id="chartGrid">
-      <!-- Row 1: 巳 午 未 申 -->
-      <div class="cell" data-palace="父母" data-zhi="巳">
-        <div class="stars">
-          <span class="star lucky">太陽</span>
-          <span class="star main">巨門</span>
+    <!-- ===== EXPLAIN CARD ===== -->
+    <div class="ex-card pc-full">
+      <div class="ex-hdr">
+        <div class="ex-ico" id="exIco">🔮</div>
+        <div>
+          <div class="ex-title" id="exTitle">點擊任一宮位 · 獲取解說</div>
+          <div class="ex-sub"   id="exSub">點選命盤宮格或大限年齡標籤</div>
         </div>
-        <div class="palace-name">父母</div>
-        <span class="branch">巳</span>
-        <span class="age-tag">2–11</span>
       </div>
-      <div class="cell" data-palace="福德" data-zhi="午">
-        <div class="stars">
-          <span class="star main">天同</span>
-          <span class="star lucky">太陰</span>
-        </div>
-        <div class="palace-name">福德</div>
-        <span class="branch">午</span>
-        <span class="age-tag">12–21</span>
-      </div>
-      <div class="cell" data-palace="田宅" data-zhi="未">
-        <div class="stars">
-          <span class="star lucky">武曲</span>
-          <span class="star">貪狼</span>
-        </div>
-        <div class="palace-name">田宅</div>
-        <span class="branch">未</span>
-        <span class="age-tag">22–31</span>
-      </div>
-      <div class="cell" data-palace="官祿" data-zhi="申">
-        <div class="stars">
-          <span class="star lucky">太陽</span>
-        </div>
-        <div class="palace-name">官祿</div>
-        <span class="branch">申</span>
-        <span class="age-tag">32–41</span>
-      </div>
-
-      <!-- Row 2: 辰 [CENTER] 酉 -->
-      <div class="cell" data-palace="田宅2" data-zhi="辰" style="display:none"></div><!-- placeholder to keep grid -->
-      <!-- Actually the grid layout is: row1=巳午未申, row2=辰,center(2col),酉, row3=卯,center(2col),戌, row4=寅丑子亥 -->
-      <!-- We'll use CSS grid-area approach below in JS-built grid -->
+      <div class="ex-body" id="exBody">紫微斗數以出生年月日時起十二宮，配以星曜落宮論吉凶。切換「大限盤」查看人生各十年運勢；「流年盤」查看當年四化引動與流年命宮。</div>
     </div>
-  </div>
 
-  <!-- EXPLAIN CARD -->
-  <div class="explain-card" id="explainCard">
-    <div class="explain-header">
-      <div class="explain-icon" id="explainIcon">🔮</div>
-      <div>
-        <div class="explain-title" id="explainTitle">點擊宮位取得解說</div>
-        <div class="explain-sub" id="explainSub">請點選命盤中任一宮位或大限年齡</div>
+    <!-- ===== FORMULA CARD ===== -->
+    <div class="card pc-full">
+      <div class="card-lbl"><i></i>命理公式 · 快速運算</div>
+      <div class="fml-grid">
+        <div class="fml-item"><div class="fml-lbl">⚖️ 五行局</div><div class="fml-val" id="fEl">水二局</div></div>
+        <div class="fml-item"><div class="fml-lbl">📅 起運歲</div><div class="fml-val" id="fAge">2<span class="fml-unit">歲</span></div></div>
+        <div class="fml-item"><div class="fml-lbl">🔮 命主星</div><div class="fml-val" id="fMas">祿存</div></div>
+        <div class="fml-item"><div class="fml-lbl">✦  身主星</div><div class="fml-val" id="fBod">天梁</div></div>
+      </div>
+      <div class="sh-box">
+        <div class="sh-ttl">四化 · <span id="shYrLbl">丙年</span></div>
+        <div class="sh-chips" id="shChips"></div>
       </div>
     </div>
-    <div class="explain-text" id="explainText">
-      紫微斗數為東方命理之精華，以出生年月日時起十二宮，配以星曜落宮論吉凶。
-      切換「大限盤」可查看人生各階段運勢；「流年盤」可查看當年四化引動。
-    </div>
-  </div>
 
-  <!-- FORMULA CARD -->
-  <div class="card">
-    <div class="card-label"><span class="dot"></span>命理公式 · 快速運算</div>
-    <div class="formula-grid">
-      <div class="formula-item">
-        <div class="f-label">⚖️ 五行局</div>
-        <div class="f-value" id="fElement">水二局</div>
-      </div>
-      <div class="formula-item">
-        <div class="f-label">📅 起運歲數</div>
-        <div class="f-value" id="fStartAge">2<span class="f-unit">歲</span></div>
-      </div>
-      <div class="formula-item">
-        <div class="f-label">🔮 命主星</div>
-        <div class="f-value" id="fMaster">祿存</div>
-      </div>
-      <div class="formula-item">
-        <div class="f-label">✦ 身主星</div>
-        <div class="f-value" id="fBody">天梁</div>
-      </div>
-    </div>
-    <div class="sihua-box">
-      <div class="sihua-title">四化 · <span id="sihuaYear">丙年</span></div>
-      <div class="sihua-chips" id="sihuaChips"></div>
-    </div>
-  </div>
+  </div><!-- /pc-row -->
 
-  <div class="footer">
-    ⚡ 資料自動儲存於瀏覽器 · 下次開啟免重新輸入<br>
-    <span style="color:var(--text3);font-size:0.65rem;">本命盤為示意版，星曜配置已預設，僅供參考學習</span>
-  </div>
-
-</div><!-- /wrapper -->
+  <div class="foot">⚡ 資料自動儲存於瀏覽器 · 下次開啟免重新輸入<br><span style="font-size:.62rem">本命盤為示意學習版，星曜配置已預設，僅供學習參考</span></div>
+</div><!-- /app -->
 
 <script>
-(function(){
-'use strict';
+(function(){'use strict';
 
-// ===== DATA =====
-const HUA_MAP = {
+/* ========== STATIC DATA ========== */
+const GAN=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const ZHI=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const HUA={
   '甲':{'廉貞':'祿','破軍':'權','武曲':'科','太陽':'忌'},
   '乙':{'天機':'祿','天梁':'權','紫微':'科','太陰':'忌'},
   '丙':{'天同':'祿','天機':'權','文昌':'科','廉貞':'忌'},
@@ -839,365 +448,246 @@ const HUA_MAP = {
   '壬':{'天梁':'祿','紫微':'權','左輔':'科','武曲':'忌'},
   '癸':{'破軍':'祿','巨門':'權','太陰':'科','貪狼':'忌'}
 };
-const GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
-const ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-
-const PALACE_DESC = {
-  '命宮':'命宮代表先天個性與格局。紫微＋天相同守，領導力強、行事穩重、具輔佐大局之能，人生主軸清晰。',
-  '兄弟':'兄弟宮論手足與同輩緣分。天同主和諧，與兄弟感情融洽，但需防依賴性過強。',
-  '夫妻':'夫妻宮看感情模式與配偶特質。天梁為蔭星，配偶可能年長或具包容力，感情中以穩定為重。',
-  '子女':'子女宮論晚輩緣。太陰性柔，子女個性溫和內斂，教養上需多給予耐心與情感陪伴。',
-  '財帛':'財帛宮主財運與理財模式。天府為庫星，守財能力佳，財源穩定，適合穩健理財策略。',
-  '疾厄':'疾厄宮對應身體健康。廉貞＋破軍，體質變化較大，需留意意外、手術及血光之災。',
-  '遷移':'遷移宮主外出與環境轉換。紫微＋七殺，適合異地發展，遠行易得貴人相助或掌權機會。',
-  '僕役':'交友宮看朋友與部屬緣。天機＋天梁，交友智慧兼備，但多思慮，宜慎選合作對象。',
-  '官祿':'官祿宮主事業與工作。太陽光明發散，適合公職、教育、能源或高能見度的職場環境。',
-  '田宅':'田宅宮論家產與居住。武曲＋貪狼，房產投資機會多，但需防衝動投機造成損失。',
-  '福德':'福德宮主精神狀態與享受。天同＋太陰，福澤深厚，喜愛文藝，精神生活豐富細膩。',
-  '父母':'父母宮看雙親緣與長輩關係。太陽＋巨門，父母健談積極，早年家庭溝通需多加用心。'
+const DESC={
+  '命宮':'命宮代表先天個性格局。紫微＋天相同守，領導力強、行事穩重，具輔佐大局之能，人生主軸清晰，宜居高位發揮才能。',
+  '兄弟':'兄弟宮論手足同輩緣。天同性和諧，與手足感情融洽，惟需防依賴性過強，彼此互助則吉。',
+  '夫妻':'夫妻宮論感情模式。天梁為蔭星入宮，配偶可能年長或富包容力，感情穩定為重，緣分宜順勢而為。',
+  '子女':'子女宮論晚輩緣分。太陰柔和入宮，子女個性溫柔內斂，教養需多給予陪伴與情感支持。',
+  '財帛':'財帛宮主財運理財。天府為庫星，守財能力佳，財源穩定可期，適合保守穩健投資策略，積累為宜。',
+  '疾厄':'疾厄宮對應身體健康。廉貞＋破軍同守，體質變化幅度大，需留意意外傷害與手術血光，定期健檢為上。',
+  '遷移':'遷移宮主外出環境。紫微＋七殺坐守，異地發展易得貴人提攜或掌權機遇，動中求財、居遠得利。',
+  '僕役':'交友宮論朋友部屬。天機＋天梁，智謀兼備但多思慮，交友宜精不宜濫，慎選合作夥伴可事半功倍。',
+  '官祿':'官祿宮主事業工作。太陽光明發散，適合公職、教育、傳播或需高曝光度之職場，宜主動積極。',
+  '田宅':'田宅宮論家產居所。武曲＋貪狼，房地產投資機會多，但需防衝動投機造成損失，宜謹慎評估。',
+  '福德':'福德宮主精神享受。天同＋太陰，福澤深厚，喜愛文藝休閒，精神生活豐富，內心平靜易感幸福。',
+  '父母':'父母宮論雙親長輩。太陽＋巨門，父母健談積極，早年家庭溝通宜多用心，長輩緣宜主動維繫。'
 };
+const ICON={'命宮':'⭐','兄弟':'👥','夫妻':'💑','子女':'👶','財帛':'💰','疾厄':'🏥','遷移':'✈️','僕役':'🤝','官祿':'💼','田宅':'🏠','福德':'🎭','父母':'👨‍👩‍👦'};
 
-const PALACE_ICONS = {
-  '命宮':'⭐','兄弟':'👥','夫妻':'💑','子女':'👶',
-  '財帛':'💰','疾厄':'🏥','遷移':'✈️','僕役':'🤝',
-  '官祿':'💼','田宅':'🏠','福德':'🎭','父母':'👨‍👩‍👦'
-};
-
-// Palace layout: 12 cells in order (clockwise from top-left row)
-// Positions in 4×4 grid (0-indexed, row,col): skip center (rows 1-2, cols 1-2)
-// Order: 巳(r0c0)午(r0c1)未(r0c2)申(r0c3) 酉(r1c3)戌(r2c3) 亥(r3c3)子(r3c2)丑(r3c1)寅(r3c0) 卯(r2c0)辰(r1c0)
-const PALACES = [
-  {name:'父母',zhi:'巳',stars:[{n:'太陽',t:'lucky'},{n:'巨門',t:'main'}],age:'2–11',   r:0,c:0},
-  {name:'福德',zhi:'午',stars:[{n:'天同',t:'main'},{n:'太陰',t:'lucky'}],age:'12–21',  r:0,c:1},
-  {name:'田宅',zhi:'未',stars:[{n:'武曲',t:'lucky'},{n:'貪狼',t:''}],age:'22–31',     r:0,c:2},
-  {name:'官祿',zhi:'申',stars:[{n:'太陽',t:'lucky'}],age:'32–41',                     r:0,c:3},
-  {name:'僕役',zhi:'酉',stars:[{n:'天機',t:'main'},{n:'天梁',t:''}],age:'42–51',      r:1,c:3},
-  {name:'遷移',zhi:'戌',stars:[{n:'紫微',t:'main'},{n:'七殺',t:''}],age:'52–61',      r:2,c:3},
-  {name:'疾厄',zhi:'亥',stars:[{n:'廉貞',t:'main'},{n:'破軍',t:''}],age:'62–71',      r:3,c:3},
-  {name:'財帛',zhi:'子',stars:[{n:'天府',t:'lucky'}],age:'72–81',                     r:3,c:2},
-  {name:'子女',zhi:'丑',stars:[{n:'太陰',t:''}],age:'82–91',                          r:3,c:1},
-  {name:'夫妻',zhi:'寅',stars:[{n:'天梁',t:''}],age:'92–101',                         r:3,c:0},
-  {name:'兄弟',zhi:'卯',stars:[{n:'天同',t:'main'}],age:'102–111',                    r:2,c:0},
-  {name:'命宮',zhi:'辰',stars:[{n:'紫微',t:'main'},{n:'天相',t:''}],age:'112–121',    r:1,c:0}
+/* Palace grid positions (1-indexed row, col in 4×4) */
+const PALACES=[
+  {n:'父母',z:'巳',s:[{t:'b',v:'太陽'},{t:'m',v:'巨門'}],  a:'2–11',    r:1,c:1},
+  {n:'福德',z:'午',s:[{t:'m',v:'天同'},{t:'b',v:'太陰'}],  a:'12–21',   r:1,c:2},
+  {n:'田宅',z:'未',s:[{t:'b',v:'武曲'},{t:'',v:'貪狼'}],   a:'22–31',   r:1,c:3},
+  {n:'官祿',z:'申',s:[{t:'b',v:'太陽'}],                   a:'32–41',   r:1,c:4},
+  {n:'僕役',z:'酉',s:[{t:'m',v:'天機'},{t:'',v:'天梁'}],   a:'42–51',   r:2,c:4},
+  {n:'遷移',z:'戌',s:[{t:'m',v:'紫微'},{t:'',v:'七殺'}],   a:'52–61',   r:3,c:4},
+  {n:'疾厄',z:'亥',s:[{t:'m',v:'廉貞'},{t:'',v:'破軍'}],   a:'62–71',   r:4,c:4},
+  {n:'財帛',z:'子',s:[{t:'b',v:'天府'}],                   a:'72–81',   r:4,c:3},
+  {n:'子女',z:'丑',s:[{t:'',v:'太陰'}],                    a:'82–91',   r:4,c:2},
+  {n:'夫妻',z:'寅',s:[{t:'',v:'天梁'}],                    a:'92–101',  r:4,c:1},
+  {n:'兄弟',z:'卯',s:[{t:'m',v:'天同'}],                   a:'102–111', r:3,c:1},
+  {n:'命宮',z:'辰',s:[{t:'m',v:'紫微'},{t:'',v:'天相'}],   a:'112–121', r:2,c:1}
 ];
+const HC={'祿':'lu','權':'quan','科':'ke','忌':'ji'};
+const SHC={'祿':'shc-lu','權':'shc-quan','科':'shc-ke','忌':'shc-ji'};
 
-// ===== GRID BUILD =====
+/* ========== GRID BUILD ========== */
 function buildGrid(){
-  const grid = document.getElementById('chartGrid');
-  grid.innerHTML='';
-  // Set explicit grid template
-  grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:7px;';
+  const g=document.getElementById('grid');
+  g.innerHTML='';
 
   PALACES.forEach(p=>{
-    const cell = document.createElement('div');
-    cell.className='cell';
-    cell.dataset.palace=p.name;
-    cell.dataset.zhi=p.zhi;
-    cell.style.gridRow=`${p.r+1}`;
-    cell.style.gridColumn=`${p.c+1}`;
+    const el=document.createElement('div');
+    el.className='cell';
+    el.style.gridRow=p.r+'';
+    el.style.gridColumn=p.c+'';
+    el.dataset.n=p.n;el.dataset.z=p.z;
 
-    // Stars
-    const starsDiv=document.createElement('div');
-    starsDiv.className='stars';
-    p.stars.forEach(s=>{
-      const span=document.createElement('span');
-      span.className='star '+(s.t||'');
-      span.textContent=s.n;
-      span.dataset.starname=s.n;
-      starsDiv.appendChild(span);
+    const sa=document.createElement('div');sa.className='stars-area';
+    p.s.forEach(s=>{
+      const sp=document.createElement('span');
+      sp.className='star '+(s.t||'');sp.textContent=s.v;sp.dataset.sn=s.v;
+      sa.appendChild(sp);
     });
-    cell.appendChild(starsDiv);
+    el.appendChild(sa);
 
-    // Palace name
-    const pn=document.createElement('div');
-    pn.className='palace-name';
-    pn.textContent=p.name;
-    cell.appendChild(pn);
+    const pn=document.createElement('div');pn.className='pname';pn.textContent=p.n;
+    el.appendChild(pn);
 
-    // Branch
-    const br=document.createElement('span');
-    br.className='branch';
-    br.textContent=p.zhi;
-    cell.appendChild(br);
+    const zh=document.createElement('span');zh.className='zhi';zh.textContent=p.z;
+    el.appendChild(zh);
 
-    // Age tag
-    const ag=document.createElement('span');
-    ag.className='age-tag';
-    ag.textContent=p.age;
-    ag.addEventListener('click',e=>{e.stopPropagation();onAgeClick(p,ag);});
-    cell.appendChild(ag);
+    const ag=document.createElement('span');ag.className='age';ag.textContent=p.a;
+    ag.addEventListener('click',e=>{e.stopPropagation();onAge(p)});
+    el.appendChild(ag);
 
-    cell.addEventListener('click',()=>onCellClick(p,cell));
-    grid.appendChild(cell);
+    el.addEventListener('click',()=>onCell(p,el));
+    g.appendChild(el);
   });
 
-  // Center cell
-  const center=document.createElement('div');
-  center.className='center';
-  center.id='centerCell';
-  center.style.gridRow='2/4';
-  center.style.gridColumn='2/4';
-  center.innerHTML=`
-    <div class="center-name" id="centerName">陳致遠</div>
-    <div class="center-detail" id="centerDetail">水二局 · 陽男</div>
-    <div class="center-badges">
-      <span class="badge badge-indigo" id="badgeElement">水二局</span>
-      <span class="badge badge-orange" id="badgeGender">陽男</span>
-      <span class="badge badge-green" id="badgeYear">丙年</span>
-    </div>`;
-  grid.appendChild(center);
+  /* center 2×2 */
+  const cen=document.createElement('div');
+  cen.className='center';
+  cen.style.gridRow='2/4';cen.style.gridColumn='2/4';
+  cen.innerHTML=
+    '<div class="c-name" id="cName">陳致遠</div>'+
+    '<div class="c-detail" id="cDet">命盤 · 陽男</div>'+
+    '<div class="c-badges">'+
+      '<span class="cbadge cb-i" id="bEl">水二局</span>'+
+      '<span class="cbadge cb-o" id="bGn">陽男</span>'+
+      '<span class="cbadge cb-g" id="bYr">丙年</span>'+
+    '</div>';
+  g.appendChild(cen);
 }
 
-// ===== CLICK HANDLERS =====
-function onCellClick(p, cell){
-  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('selected'));
-  cell.classList.add('selected');
-  const stars=p.stars.map(s=>s.n).join('、');
-  const desc=PALACE_DESC[p.name]||'此宮位星曜交織，需綜合參看三方四正。';
-  const icon=PALACE_ICONS[p.name]||'🏯';
-  document.getElementById('explainIcon').textContent=icon;
-  document.getElementById('explainTitle').textContent=`${p.name}宮（${p.zhi}）`;
-  document.getElementById('explainSub').textContent=`主星：${stars||'無'}  ╱  大限：${p.age}歲`;
-  document.getElementById('explainText').textContent=desc;
+/* ========== EVENTS ========== */
+function onCell(p,el){
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const stars=p.s.map(s=>s.v).join('、');
+  setEx(ICON[p.n]||'🏯',`${p.n}宮（${p.z}）`,`主星：${stars||'無主星'}  ╱  大限：${p.a}歲`,DESC[p.n]||'此宮位星曜需綜合三方四正參看。');
+}
+function onAge(p){
+  const stars=p.s.map(s=>s.v).join('、');
+  setEx('⏳',`大限 ${p.a}歲（${p.n}宮）`,`行至：${p.n}  ╱  主星：${stars||'無'}`,
+    `大限走入${p.n}宮（${p.z}），此十年運勢重心在${p.n}相關事務。主星${stars}主導格局，宜把握宮位特質積極發展，並注意三方四正沖照加減分之效。`);
+}
+function setEx(ico,ti,su,bo){
+  document.getElementById('exIco').textContent=ico;
+  document.getElementById('exTitle').textContent=ti;
+  document.getElementById('exSub').textContent=su;
+  document.getElementById('exBody').textContent=bo;
 }
 
-function onAgeClick(p, tag){
-  const stars=p.stars.map(s=>s.n).join('、');
-  document.getElementById('explainIcon').textContent='⏳';
-  document.getElementById('explainTitle').textContent=`大限 ${p.age}歲（${p.name}宮）`;
-  document.getElementById('explainSub').textContent=`行至：${p.name}  ╱  主星：${stars||'無'}`;
-  document.getElementById('explainText').textContent=
-    `大限走入${p.name}宮（${p.zhi}），此十年運勢重點集中於${p.name}相關事務。主星${stars||'無'}主導此期格局，宜把握宮位特質積極發展，同時留意三方四正沖照。`;
+/* ========== ANNUAL ========== */
+function ganZhi(y){return{gan:GAN[(y-4)%10],zhi:ZHI[(y-4)%12]}}
+function huaOf(y){return HUA[ganZhi(y).gan]||HUA['丙']}
+function clearAnnual(){
+  document.querySelectorAll('.hb').forEach(t=>t.remove());
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('ann'));
 }
-
-// ===== YEAR HELPERS =====
-function yearGanZhi(year){
-  return {gan:GAN[(year-4)%10], zhi:ZHI[(year-4)%12]};
-}
-function siHuaForYear(year){
-  const {gan}=yearGanZhi(year);
-  return HUA_MAP[gan]||HUA_MAP['丙'];
-}
-
-// ===== APPLY ANNUAL =====
-function clearHuaTags(){
-  document.querySelectorAll('.hua-tag').forEach(t=>t.remove());
-  document.querySelectorAll('.cell').forEach(c=>{
-    c.classList.remove('annual-hi');
+window.applyAnnual=function(){
+  clearAnnual();
+  const y=parseInt(document.getElementById('selYear').value);
+  const {gan,zhi:tz}=ganZhi(y);
+  const hua=huaOf(y);
+  document.querySelectorAll('.cell').forEach(el=>{
+    const zh=el.querySelector('.zhi');
+    if(zh&&zh.textContent===tz) el.classList.add('ann');
   });
-}
-
-function applyAnnual(){
-  clearHuaTags();
-  const yearEl=document.getElementById('annualYear');
-  const year=parseInt(yearEl.value);
-  const {zhi:targetZhi,gan}=yearGanZhi(year);
-  const hua=siHuaForYear(year);
-
-  // Highlight annual palace
-  document.querySelectorAll('.cell').forEach(cell=>{
-    const bEl=cell.querySelector('.branch');
-    if(bEl&&bEl.textContent===targetZhi) cell.classList.add('annual-hi');
-  });
-
-  // Add hua tags
-  const huaClassMap={'祿':'lu','權':'quan','科':'ke','忌':'ji'};
-  document.querySelectorAll('.cell .star').forEach(starEl=>{
-    const name=starEl.dataset.starname;
-    if(name&&hua[name]){
-      const tag=document.createElement('span');
-      tag.className=`hua-tag ${huaClassMap[hua[name]]||''}`;
-      tag.textContent=hua[name];
-      starEl.appendChild(tag);
+  document.querySelectorAll('.cell .star').forEach(sp=>{
+    const sn=sp.dataset.sn;
+    if(sn&&hua[sn]){
+      const b=document.createElement('span');
+      b.className='hb '+(HC[hua[sn]]||'');b.textContent=hua[sn];sp.appendChild(b);
     }
   });
-
-  updateSiHuaDisplay(year);
-  document.getElementById('badgeYear').textContent=gan+'年';
-}
-
-// ===== SIHUA DISPLAY =====
-function updateSiHuaDisplay(year){
-  const {gan}=yearGanZhi(year);
-  const hua=siHuaForYear(year);
-  const chipm={'祿':'chip-lu','權':'chip-quan','科':'chip-ke','忌':'chip-ji'};
-  const container=document.getElementById('sihuaChips');
-  container.innerHTML='';
-  document.getElementById('sihuaYear').textContent=gan+'年';
+  updateSH(y);
+  const bYr=document.getElementById('bYr');if(bYr)bYr.textContent=gan+'年';
+};
+function updateSH(y){
+  const {gan}=ganZhi(y);const hua=huaOf(y);
+  document.getElementById('shYrLbl').textContent=gan+'年';
+  const cont=document.getElementById('shChips');cont.innerHTML='';
   for(const[star,h] of Object.entries(hua)){
-    const chip=document.createElement('span');
-    chip.className=`sihua-chip ${chipm[h]||''}`;
-    chip.textContent=star+h;
-    container.appendChild(chip);
+    const sp=document.createElement('span');
+    sp.className='shc '+(SHC[h]||'');sp.textContent=star+h;cont.appendChild(sp);
   }
 }
 
-// ===== FORMULA VALUES =====
-function setFormula(gender){
-  if(gender==='male'){
-    document.getElementById('fElement').textContent='水二局';
-    document.getElementById('fStartAge').innerHTML='2<span class="f-unit">歲</span>';
-    document.getElementById('fMaster').textContent='祿存';
-    document.getElementById('fBody').textContent='天梁';
-    document.getElementById('badgeElement').textContent='水二局';
-    document.getElementById('badgeGender').textContent='陽男';
-  } else {
-    document.getElementById('fElement').textContent='木三局';
-    document.getElementById('fStartAge').innerHTML='3<span class="f-unit">歲</span>';
-    document.getElementById('fMaster').textContent='廉貞';
-    document.getElementById('fBody').textContent='天同';
-    document.getElementById('badgeElement').textContent='木三局';
-    document.getElementById('badgeGender').textContent='陰女';
-  }
+/* ========== FORMULA ========== */
+function setFormula(g){
+  const m=g==='m';
+  document.getElementById('fEl').textContent=m?'水二局':'木三局';
+  document.getElementById('fAge').innerHTML=(m?'2':'3')+'<span class="fml-unit">歲</span>';
+  document.getElementById('fMas').textContent=m?'祿存':'廉貞';
+  document.getElementById('fBod').textContent=m?'天梁':'天同';
+  const bEl=document.getElementById('bEl');const bGn=document.getElementById('bGn');
+  if(bEl)bEl.textContent=m?'水二局':'木三局';
+  if(bGn)bGn.textContent=m?'陽男':'陰女';
 }
 
-// ===== STORAGE =====
-const STORE_KEY='ziwei_v2';
-function load(){ try{return JSON.parse(localStorage.getItem(STORE_KEY)||'null');}catch(e){return null;} }
-function save(d){ try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){} }
-function loadHistory(){ try{return JSON.parse(localStorage.getItem(STORE_KEY+'_hist')||'[]');}catch(e){return[];} }
-function saveHistory(arr){ try{localStorage.setItem(STORE_KEY+'_hist',JSON.stringify(arr.slice(0,8)));}catch(e){} }
-
-function updateNameHints(){
-  const hist=loadHistory();
-  const hints=document.getElementById('nameHints');
-  const dl=document.getElementById('name-history');
-  hints.innerHTML='';
-  dl.innerHTML='';
-  hist.forEach(n=>{
-    const chip=document.createElement('div');
-    chip.className='hint-chip';
-    chip.textContent=n;
-    chip.onclick=()=>{document.getElementById('userName').value=n;updateCenterLive(n);};
-    hints.appendChild(chip);
-    const opt=document.createElement('option');
-    opt.value=n;
-    dl.appendChild(opt);
+/* ========== STORAGE ========== */
+const K='ziwei4',KH='ziwei4h';
+function load(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch{return null}}
+function save(d){try{localStorage.setItem(K,JSON.stringify(d))}catch{}}
+function loadH(){try{return JSON.parse(localStorage.getItem(KH)||'[]')}catch{return[]}}
+function saveH(a){try{localStorage.setItem(KH,JSON.stringify(a.slice(0,8)))}catch{}}
+function addH(n){if(!n)return;let h=loadH().filter(x=>x!==n);h.unshift(n);saveH(h);renderH()}
+function renderH(){
+  const row=document.getElementById('histRow');row.innerHTML='';
+  loadH().forEach(n=>{
+    const ch=document.createElement('div');ch.className='hist-chip';ch.textContent=n;
+    ch.onclick=()=>{document.getElementById('iName').value=n;liveName(n)};
+    row.appendChild(ch);
   });
 }
+function liveName(v){const el=document.getElementById('cName');if(el)el.textContent=(v.trim()||'命造')}
 
-function addToHistory(name){
-  if(!name) return;
-  let hist=loadHistory();
-  hist=hist.filter(h=>h!==name);
-  hist.unshift(name);
-  saveHistory(hist);
-  updateNameHints();
-}
-
-// ===== LIVE UPDATE =====
-function updateCenterLive(name){
-  const el=document.getElementById('centerName');
-  if(el) el.textContent=name.trim()||'命造';
-}
-
-// ===== SUBMIT =====
-window.submitChart=function(){
-  const name=(document.getElementById('userName').value||'').trim()||'命造';
-  const gender=document.getElementById('userGender').value;
-  const birth=document.getElementById('userBirth').value;
-  save({name,gender,birth});
-  addToHistory(name);
-  document.getElementById('centerName').textContent=name;
-  const gText=gender==='male'?'陽男':'陰女';
-  document.getElementById('centerDetail').textContent=`命盤 · ${gText}`;
-  setFormula(gender);
-  const currentYear=getCurrentAnnualYear();
-  updateSiHuaDisplay(currentYear);
-  const activeTab=document.querySelector('.tab.active');
-  if(activeTab&&activeTab.dataset.mode==='annual') applyAnnual();
-  else clearHuaTags();
-  // Pulse animation
-  const btn=document.querySelector('.btn-submit');
-  btn.textContent='✓ 已儲存！';
-  setTimeout(()=>{btn.textContent='✦ 更新命盤 & 記憶';},1500);
-};
-
-// ===== TABS =====
-window.switchTab=function(el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  const mode=el.dataset.mode;
-  const yearBar=document.getElementById('yearBar');
-  if(mode==='annual'){
-    yearBar.classList.add('show');
-    applyAnnual();
-  } else {
-    yearBar.classList.remove('show');
-    clearHuaTags();
-  }
-};
-
-// ===== YEAR SELECTOR INIT =====
-function initYearSelector(){
-  const sel=document.getElementById('annualYear');
-  sel.innerHTML='';
+/* ========== YEAR SELECTOR ========== */
+function initYears(){
+  const sel=document.getElementById('selYear');sel.innerHTML='';
   const now=new Date().getFullYear();
   for(let y=now-6;y<=now+6;y++){
-    const opt=document.createElement('option');
-    opt.value=y;
-    opt.textContent=y+'年（'+yearGanZhi(y).gan+yearGanZhi(y).zhi+'）';
-    if(y===now) opt.selected=true;
-    sel.appendChild(opt);
+    const o=document.createElement('option');
+    const{gan,zhi}=ganZhi(y);
+    o.value=y;o.textContent=y+'年（'+gan+zhi+'）';
+    if(y===now)o.selected=true;sel.appendChild(o);
   }
 }
+function curY(){return parseInt(document.getElementById('selYear').value)||new Date().getFullYear()}
 
-function getCurrentAnnualYear(){
-  return parseInt(document.getElementById('annualYear').value)||new Date().getFullYear();
-}
+/* ========== TABS ========== */
+window.switchTab=function(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const yrBar=document.getElementById('yrBar');
+  if(el.dataset.m==='annual'){yrBar.classList.add('show');applyAnnual()}
+  else{yrBar.classList.remove('show');clearAnnual()}
+};
 
-// ===== THEME =====
-const themeBtn=document.getElementById('themeBtn');
-function applyTheme(dark){
+/* ========== SUBMIT ========== */
+document.getElementById('btnSub').onclick=function(){
+  const name=(document.getElementById('iName').value||'').trim()||'命造';
+  const g=document.getElementById('iGender').value;
+  const b=document.getElementById('iBirth').value;
+  save({name,g,b});addH(name);
+  liveName(name);
+  const cd=document.getElementById('cDet');if(cd)cd.textContent='命盤 · '+(g==='m'?'陽男':'陰女');
+  setFormula(g);updateSH(curY());
+  const on=document.querySelector('.tab.on');
+  if(on&&on.dataset.m==='annual')applyAnnual();else clearAnnual();
+  this.textContent='✓ 已儲存！';
+  setTimeout(()=>{this.textContent='✦ 更新命盤 · 記憶'},1600);
+};
+
+/* ========== THEME ========== */
+const btnTh=document.getElementById('btnTheme');
+function setTheme(dark){
   document.body.classList.toggle('dark',dark);
-  themeBtn.textContent=dark?'☀️':'🌙';
-  try{localStorage.setItem('ziwei_theme',dark?'dark':'light');}catch(e){}
+  btnTh.textContent=dark?'☀️':'🌙';
+  try{localStorage.setItem('ziwei4t',dark?'1':'0')}catch{}
 }
-themeBtn.addEventListener('click',()=>{
-  applyTheme(!document.body.classList.contains('dark'));
-});
+btnTh.onclick=()=>setTheme(!document.body.classList.contains('dark'));
 
-// ===== INIT =====
-function init(){
-  // Theme
-  const savedTheme=localStorage.getItem('ziwei_theme');
-  if(savedTheme) applyTheme(savedTheme==='dark');
-  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme(true);
+/* ========== INIT ========== */
+(function init(){
+  const th=localStorage.getItem('ziwei4t');
+  if(th!==null)setTheme(th==='1');
+  else if(window.matchMedia('(prefers-color-scheme:dark)').matches)setTheme(true);
 
-  // Build grid
-  buildGrid();
+  buildGrid();initYears();
 
-  // Year selector
-  initYearSelector();
-
-  // Load saved data
-  const data=load();
-  if(data){
-    if(data.name) document.getElementById('userName').value=data.name;
-    if(data.gender) document.getElementById('userGender').value=data.gender;
-    if(data.birth) document.getElementById('userBirth').value=data.birth;
-  } else {
-    // defaults
-    document.getElementById('userName').value='陳致遠';
-    document.getElementById('userBirth').value='1990-06-15T10:30';
+  const d=load();
+  if(d){
+    document.getElementById('iName').value=d.name||'陳致遠';
+    document.getElementById('iGender').value=d.g||'m';
+    document.getElementById('iBirth').value=d.b||'1990-06-15T10:30';
+  }else{
+    document.getElementById('iName').value='陳致遠';
+    document.getElementById('iBirth').value='1990-06-15T10:30';
   }
 
-  // Update center
-  const name=(document.getElementById('userName').value||'').trim()||'命造';
-  const gender=document.getElementById('userGender').value;
-  document.getElementById('centerName').textContent=name;
-  document.getElementById('centerDetail').textContent=`命盤 · ${gender==='male'?'陽男':'陰女'}`;
-  setFormula(gender);
-  updateSiHuaDisplay(getCurrentAnnualYear());
-  updateNameHints();
+  const nm=(document.getElementById('iName').value||'').trim()||'命造';
+  const gv=document.getElementById('iGender').value;
+  liveName(nm);
+  const cd=document.getElementById('cDet');if(cd)cd.textContent='命盤 · '+(gv==='m'?'陽男':'陰女');
+  setFormula(gv);updateSH(curY());renderH();
 
-  // Live name update
-  document.getElementById('userName').addEventListener('input',e=>{
-    updateCenterLive(e.target.value);
-  });
-}
+  document.getElementById('iName').addEventListener('input',e=>liveName(e.target.value));
+})();
 
-init();
 })();
 </script>
 </body>
