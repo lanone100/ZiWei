@@ -492,7 +492,15 @@ body.dark .ex-tag-star{color:#FFD700;background:rgba(255,196,0,.15);border-color
 .shc-ke  {background:rgba(232,114,74,.12);  color:var(--blue);   border:1px solid rgba(232,114,74,.28)}
 .shc-ji  {background:rgba(232,58,90,.12);   color:var(--red);    border:1px solid rgba(232,58,90,.28)}
 
-/* ===================== FOOTER ===================== */
+/* mode badge */
+.ex-mode-badge{
+  font-size:.68rem;font-weight:800;
+  padding:3px 10px;border-radius:16px;
+  letter-spacing:.06em;
+}
+.badge-base  {background:rgba(155,63,156,.14);color:var(--indigo); border:1.5px solid rgba(155,63,156,.3)}
+.badge-decade{background:rgba(255,112,67,.14);color:var(--orange); border:1.5px solid rgba(255,112,67,.32)}
+.badge-annual{background:rgba(212,70,138,.14);color:var(--accent); border:1.5px solid rgba(212,70,138,.32)}
 .foot{text-align:center;font-size:.69rem;color:var(--t3);margin-top:20px;border-top:1px solid var(--border);padding-top:13px;line-height:1.8}
 
 /* ===================== ANIM ===================== */
@@ -813,39 +821,261 @@ function buildGrid(){
   g.appendChild(cen);
 }
 
-/* ========== EVENTS ========== */
+/* ========== MODE TRACKER ========== */
+let currentMode='base'; // 'base' | 'decade' | 'annual'
+
+/* ========== PALACE EXPLAIN DATA BY MODE ========== */
+// Decade-specific context per palace
+const DECADE_CONTEXT={
+  '命宮':{
+    intro:'大限走入命宮，這十年是人生格局重整的關鍵時期。',
+    theme:'十年重心：自我認知、個人形象全面刷新，人生方向可能出現重大轉折。',
+    trend:'事業與個人品牌進入高曝光階段，適合創業、轉職或建立個人影響力。',
+    caution:'此限易因自我意識過強而與人發生摩擦，切忌固執己見。',
+  },
+  '兄弟':{
+    intro:'大限走入兄弟宮，這十年人際網絡的品質決定你的高度。',
+    theme:'十年重心：同輩、合夥人、兄弟姊妹在生命中扮演關鍵角色。',
+    trend:'合夥機會增加，易與志同道合的人攜手創業或共事。',
+    caution:'需防合作糾紛或手足間的利益摩擦，合作前務必白紙黑字。',
+  },
+  '夫妻':{
+    intro:'大限走入夫妻宮，感情婚姻進入人生最重要的十年。',
+    theme:'十年重心：感情關係、婚姻狀態、伴侶互動主導這十年的情緒起伏。',
+    trend:'未婚者極易在此限遇到重要的伴侶；已婚者感情關係面臨重整與深化。',
+    caution:'若大限命宮化忌落入本命夫妻宮，感情波折風險大增，宜謹慎處理。',
+  },
+  '子女':{
+    intro:'大限走入子女宮，這十年與晚輩、投資、性情有深刻連結。',
+    theme:'十年重心：子女教育、投資理財規劃、與下屬的互動模式。',
+    trend:'此限也代表財庫開合——理財決策對十年財富影響深遠。',
+    caution:'防衝動投資，子女或部屬事務耗費精力，需提前規劃。',
+  },
+  '財帛':{
+    intro:'大限走入財帛宮，這十年財運進入核心發展期。',
+    theme:'十年重心：主動求財、收入結構改變、財富積累的黃金視窗。',
+    trend:'此限若三方化祿多，是人生財富爆發的最佳時機；應積極把握。',
+    caution:'同時也是大額支出的高峰期，防止財來財去、入不敷出。',
+  },
+  '疾厄':{
+    intro:'大限走入疾厄宮，這十年健康議題需列為首要管理目標。',
+    theme:'十年重心：體質變化、慢性病預防、手術意外風險評估。',
+    trend:'此限精力起伏較大，工作衝勁強時需防積勞成疾。',
+    caution:'定期健康檢查為必要行動，特別留意循環系統與意外傷害。',
+  },
+  '遷移':{
+    intro:'大限走入遷移宮，這十年異地、外部環境是你的能量場。',
+    theme:'十年重心：外派、移居、跨國業務、出差頻率大增。',
+    trend:'動中得財，此限越移動越順，固守原地反而停滯。',
+    caution:'防在外地遭遇人際陷阱或意外事故，出行前宜謹慎評估。',
+  },
+  '僕役':{
+    intro:'大限走入僕役宮，這十年人際圈的組成影響你的格局。',
+    theme:'十年重心：貴人小人更替頻繁，識人之術決定合作成敗。',
+    trend:'優質的合夥人或得力部屬在此限出現機率高，應積極培養。',
+    caution:'也是小人容易混入的時期，需對身邊的人保持一定的判斷力。',
+  },
+  '官祿':{
+    intro:'大限走入官祿宮，這十年是事業生涯最重要的黃金時期。',
+    theme:'十年重心：職位晉升、創業建業、功名成就達到階段性高峰。',
+    trend:'此限事業能量最強，是職場衝刺的最佳視窗，應全力以赴。',
+    caution:'若大限化忌入官祿，防職場官非或事業受挫，低調行事為宜。',
+  },
+  '田宅':{
+    intro:'大限走入田宅宮，這十年家庭、居住、不動產是主題。',
+    theme:'十年重心：置產換屋、家庭環境改變、家族關係重整。',
+    trend:'不動產投資的時機點落在此限，是累積固定資產的重要期。',
+    caution:'家庭內部關係需多用心維繫，防因居住環境變動引發家庭摩擦。',
+  },
+  '福德':{
+    intro:'大限走入福德宮，這十年精神層面的滋養比物質更重要。',
+    theme:'十年重心：心靈成長、生活品質、對生命意義的重新探索。',
+    trend:'此限容易接觸心理、哲學、靈性議題，對人生觀有深刻影響。',
+    caution:'物質慾望若過旺，反而引起內心空虛，宜平衡外在成就與內在充實。',
+  },
+  '父母':{
+    intro:'大限走入父母宮，這十年與長輩、上司、制度的互動最為密切。',
+    theme:'十年重心：親子關係、師長貴人、文書考試運勢。',
+    trend:'此限考試、晉升、申請類事務（文書、執照、學歷）有加分效果。',
+    caution:'與父母或上司的關係若有摩擦，宜主動化解，避免影響整體運勢。',
+  }
+};
+
+// Annual-specific context per palace
+const ANNUAL_CONTEXT={
+  '命宮':{
+    intro:'流年命宮啟動——今年是你「重新定義自己」的年份。',
+    event:'今年容易出現改變自我形象、轉換跑道、或被迫面對個人問題的事件。',
+    sihua:'流年四化引動命宮，吉化（祿/權/科）帶來機遇與肯定；化忌則需防健康問題或重大決策失誤。',
+    tip:'此年宜主動出擊，但需謹防衝動行事，凡事三思後動。',
+  },
+  '兄弟':{
+    intro:'流年走入兄弟宮——今年人際合作是年度關鍵詞。',
+    event:'手足或同輩間可能發生重要的互動或摩擦，合夥事業有具體進展或糾紛。',
+    sihua:'化祿：合作機會湧現；化忌：防合夥破裂或手足官非。',
+    tip:'今年合約、合作協議宜謹慎簽訂，書面條款務必明確。',
+  },
+  '夫妻':{
+    intro:'流年走入夫妻宮——今年感情婚姻出現具體事件。',
+    event:'未婚者可能論及婚嫁；已婚者迎來感情高峰或衝突危機，是婚姻的試煉年。',
+    sihua:'化祿：感情甜蜜，有緣分進展；化忌：防第三者、離婚或感情凍結。',
+    tip:'溝通是今年感情的關鍵，任何誤解都宜即時化解，勿讓情緒累積。',
+  },
+  '子女':{
+    intro:'流年走入子女宮——今年子嗣、投資、部屬是焦點。',
+    event:'子女可能迎來重要人生事件；投資理財有具體得失；部屬或學生關係有變動。',
+    sihua:'化祿：投資有獲利，子女喜事；化忌：防投資虧損或子女健康問題。',
+    tip:'今年財庫狀態決定後半年財運，謹慎管理現金流。',
+  },
+  '財帛':{
+    intro:'流年走入財帛宮——今年財務是最直接的年度考驗。',
+    event:'收入有具體增減，可能有意外之財或突發大額支出。',
+    sihua:'化祿：財運亨通，有進財；化忌：防詐騙、借貸或資金斷鏈。',
+    tip:'今年任何大額金融決策都需審慎評估，避免衝動消費或高槓桿投資。',
+  },
+  '疾厄':{
+    intro:'流年走入疾厄宮——今年身體健康需要特別關注。',
+    event:'可能有突發的健康問題、手術、或意外傷害。也可能代表情緒或心理狀態的波動。',
+    sihua:'化祿：體力充沛，小病自癒；化忌：需高度警覺，宜提前健康檢查。',
+    tip:'今年避免過度操勞，防止積勞成疾；出行需注意交通安全。',
+  },
+  '遷移':{
+    intro:'流年走入遷移宮——今年外部環境帶來具體的機遇或考驗。',
+    event:'可能有出差、旅行、搬遷或面臨外部環境的突發改變。',
+    sihua:'化祿：外出順利，異地逢貴；化忌：防出外受阻、旅途意外或訴訟糾紛。',
+    tip:'今年適合主動拓展外部關係，但需對陌生環境保持謹慎。',
+  },
+  '僕役':{
+    intro:'流年走入僕役宮——今年人際關係出現明顯的人事變動。',
+    event:'貴人或小人在今年會以具體形式出現，員工離職、友情重組是常見事件。',
+    sihua:'化祿：貴人相助，合作順利；化忌：防被背叛、員工突然離職或人際糾紛。',
+    tip:'今年宜鞏固核心圈子，對新認識的人際關係保持適當距離。',
+  },
+  '官祿':{
+    intro:'流年走入官祿宮——今年事業有具體的升沉事件。',
+    event:'升職、創業、換工作或職場風波在今年最可能發生。',
+    sihua:'化祿：升遷、加薪、事業高峰；化忌：防被降職、官非或創業受挫。',
+    tip:'今年職場表現特別受到矚目，積極進取可獲得豐碩成果。',
+  },
+  '田宅':{
+    intro:'流年走入田宅宮——今年居住、家庭、房產有具體事件。',
+    event:'換屋、置產、家庭成員異動（如有人搬入或遷出）在今年可能發生。',
+    sihua:'化祿：置產時機，家宅吉祥；化忌：防漏水、搬遷耗財或家庭紛爭。',
+    tip:'今年家庭和諧需要主動維護，避免因金錢或居住問題引發衝突。',
+  },
+  '福德':{
+    intro:'流年走入福德宮——今年心靈狀態決定整體生命品質。',
+    event:'情緒大起伏、精神壓力、或突然對生命意義產生疑惑，是今年常見的內在事件。',
+    sihua:'化祿：心情愉快，精神充實；化忌：防憂鬱、焦慮或衝動消費。',
+    tip:'今年宜保持規律生活作息，透過運動、靜心或旅行排解壓力。',
+  },
+  '父母':{
+    intro:'流年走入父母宮——今年與長輩、文書、制度有具體互動。',
+    event:'父母健康變化、申請文件、考試、訴訟合約在今年會有具體結果。',
+    sihua:'化祿：長輩助力，文書順利；化忌：防長輩生病、文書糾紛或考試失利。',
+    tip:'今年所有文書、合約、申請事項都需仔細確認，避免因疏忽造成損失。',
+  }
+};
+
+/* ========== CLICK HANDLERS ========== */
 function onCell(p,el){
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
-  const info=PALACE_INFO[p.n];
-  // update palace nav active state
   document.querySelectorAll('.pnav-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.palace===p.n);
   });
+  renderExplain(p, currentMode);
+}
+
+function onAge(p){
+  document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.remove('active'));
+  renderDecadeExplain(p);
+}
+
+/* ========== RENDER EXPLAIN BY MODE ========== */
+function renderExplain(p, mode){
+  if(mode==='base')       renderBaseExplain(p);
+  else if(mode==='decade') renderDecadeExplain(p);
+  else if(mode==='annual') renderAnnualExplain(p);
+}
+
+function renderBaseExplain(p){
+  const info=PALACE_INFO[p.n];
+  const stars=p.s.map(s=>s.v).join('、');
   if(info){
-    setEx(info.icon, info.title, info.sub, info.body, info.tags, p.s.map(s=>s.v).join('、'), p.a);
-  } else {
-    const stars=p.s.map(s=>s.v).join('、');
-    setEx('🏯',`${p.n}宮（${p.z}）`,`主星：${stars||'無主星'}  ╱  大限：${p.a}歲`,'此宮位星曜需綜合三方四正參看。',[],stars,p.a);
+    setEx({
+      ico:info.icon,
+      badge:'本命',
+      badgeCls:'badge-base',
+      title:info.title,
+      sub:info.sub,
+      body:info.body,
+      tags:[...info.tags],
+      stars,
+      age:p.a
+    });
   }
 }
-function onAge(p){
-  const stars=p.s.map(s=>s.v).join('、');
+
+function renderDecadeExplain(p){
   const info=PALACE_INFO[p.n];
-  document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.remove('active'));
-  setEx('⏳',
-    `大限 ${p.a}歲 ─ ${p.n}宮`,
-    `行至大限宮：${p.n}  ╱  地支：${p.z}  ╱  主星：${stars||'無'}`,
-    `大限走入${p.n}宮（${p.z}），此十年人生重心集中於${p.n}相關事務。\n\n主星【${stars||'無'}】主導此期格局，${info?info.body.slice(0,80)+'…':'宜把握宮位特質積極發展，注意三方四正沖照加減分之效。'}\n\n建議在此十年積極對應${p.n}宮所代表的人生議題，善用主星特質，謹防煞忌引動之不利時機。`,
-    ['大限運勢','十年格局'],stars,p.a);
+  const dc=DECADE_CONTEXT[p.n];
+  const stars=p.s.map(s=>s.v).join('、');
+  const body=dc
+    ?`${dc.intro}\n\n【十年主題】${dc.theme}\n\n【運勢趨勢】${dc.trend}\n\n【注意事項】${dc.caution}\n\n【本命參照】${info?info.body.substring(0,120)+'…':''}`
+    :`大限走入${p.n}宮，此十年以${p.n}相關事務為重心。主星${stars}主導格局，宜善用宮位能量積極布局。`;
+  setEx({
+    ico:'⏳',
+    badge:'大限',
+    badgeCls:'badge-decade',
+    title:`大限 ${p.a}歲 — ${p.n}宮`,
+    sub:`大限主題：${p.n} ╱ 地支：${p.z} ╱ 主星：${stars||'無'}`,
+    body,
+    tags:['十年格局','大限運勢','環境趨勢'],
+    stars,
+    age:p.a
+  });
 }
-function setEx(ico,ti,su,bo,tags,stars,age){
+
+function renderAnnualExplain(p){
+  const info=PALACE_INFO[p.n];
+  const ac=ANNUAL_CONTEXT[p.n];
+  const stars=p.s.map(s=>s.v).join('、');
+  const y=curY();
+  const {gan}=ganZhi(y);
+  const hua=huaOf(y);
+  // Check if any star in this palace has a hua
+  const localHua=p.s.map(s=>s.v).filter(v=>hua[v]).map(v=>v+hua[v]).join('、');
+  const body=ac
+    ?`${ac.intro}\n\n【年度事件】${ac.event}\n\n【四化引動】${ac.sihua}${localHua?'\n本宮今年四化：'+localHua:'（本宮本年無直接四化）'}\n\n【行動建議】${ac.tip}\n\n【疊宮參照】搭配本命${p.n}宮（${stars||'無主星'}）特質，今年流年引動的能量需與大限盤合參，才能精準判斷事件輕重。`
+    :`流年走入${p.n}宮（${p.z}），今年在此宮代表的領域中有具體事件發生。主星${stars||'無'}在${gan}年受四化引動，宜留意相應領域的變化。`;
+  setEx({
+    ico:'📅',
+    badge:`${gan}年 流年`,
+    badgeCls:'badge-annual',
+    title:`流年 ${y} — ${p.n}宮`,
+    sub:`流年命宮地支：${p.z} ╱ ${gan}年四化引動 ╱ 主星：${stars||'無'}`,
+    body,
+    tags:['流年事件','四化連動','當年應驗'],
+    stars,
+    age:null
+  });
+}
+
+function setEx({ico,badge,badgeCls,title,sub,body,tags,stars,age}){
   document.getElementById('exIco').textContent=ico;
-  document.getElementById('exTitle').textContent=ti;
-  document.getElementById('exSub').textContent=su;
-  // Tags
+  document.getElementById('exTitle').textContent=title;
+  document.getElementById('exSub').textContent=sub;
+
+  // Mode badge + tags
   const tagsEl=document.getElementById('exTags');
   tagsEl.innerHTML='';
+  if(badge){
+    const mb=document.createElement('span');
+    mb.className='ex-tag ex-mode-badge '+(badgeCls||'');
+    mb.textContent=badge;
+    tagsEl.appendChild(mb);
+  }
   if(stars){
     const sc=document.createElement('span');
     sc.className='ex-tag ex-tag-star';
@@ -863,38 +1093,98 @@ function setEx(ico,ti,su,bo,tags,stars,age){
     tc.className='ex-tag';tc.textContent=t;
     tagsEl.appendChild(tc);
   });
-  // Body — parse 【...】 as section headers
+
+  // Body
   const bodyEl=document.getElementById('exBody');
   bodyEl.innerHTML='';
-  const paras=bo.split('\n\n').filter(p=>p.trim());
+  const paras=body.split('\n\n').filter(p=>p.trim());
   paras.forEach((para,i)=>{
     const trimmed=para.trim();
     if(!trimmed)return;
-    // Parse inline 【header】 : content patterns
     const div=document.createElement('div');
     div.className='ex-para'+(i===0?' ex-para-first':'');
-    // Check if paragraph starts with 【...】
     const secMatch=trimmed.match(/^(【[^】]+】)(.*)$/s);
     if(secMatch){
       const sec=document.createElement('span');
       sec.className='ex-section';
       sec.textContent=secMatch[1];
       div.appendChild(sec);
-      const rest=document.createTextNode(secMatch[2].trim());
-      div.appendChild(rest);
+      div.appendChild(document.createTextNode(secMatch[2].trim()));
     } else {
       div.textContent=trimmed;
     }
     bodyEl.appendChild(div);
-    // divider between paragraphs (not last)
     if(i<paras.length-1){
-      const hr=document.createElement('hr');
-      hr.className='ex-divider';
-      bodyEl.appendChild(hr);
+      const hr=document.createElement('hr');hr.className='ex-divider';bodyEl.appendChild(hr);
     }
   });
-  // scroll top
   bodyEl.scrollTop=0;
+}
+
+/* ========== ANNUAL ========== */
+function ganZhi(y){return{gan:GAN[(y-4)%10],zhi:ZHI[(y-4)%12]}}
+function huaOf(y){return HUA[ganZhi(y).gan]||HUA['丙']}
+function clearAnnual(){
+  document.querySelectorAll('.hb').forEach(t=>t.remove());
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('ann'));
+}
+window.applyAnnual=function(){
+  clearAnnual();
+  const y=parseInt(document.getElementById('selYear').value);
+  const {gan,zhi:tz}=ganZhi(y);
+  const hua=huaOf(y);
+  document.querySelectorAll('.cell').forEach(el=>{
+    const zh=el.querySelector('.zhi');
+    if(zh&&zh.textContent===tz) el.classList.add('ann');
+  });
+  document.querySelectorAll('.cell .star').forEach(sp=>{
+    const sn=sp.dataset.sn;
+    if(sn&&hua[sn]){
+      const b=document.createElement('span');
+      b.className='hb '+(HC[hua[sn]]||'');b.textContent=hua[sn];sp.appendChild(b);
+    }
+  });
+  updateSH(y);
+  const bYr=document.getElementById('bYr');if(bYr)bYr.textContent=gan+'年';
+  // Show annual intro in explain panel
+  showModeIntro('annual');
+};
+function updateSH(y){
+  const {gan}=ganZhi(y);const hua=huaOf(y);
+  document.getElementById('shYrLbl').textContent=gan+'年';
+  const cont=document.getElementById('shChips');cont.innerHTML='';
+  for(const[star,h] of Object.entries(hua)){
+    const sp=document.createElement('span');
+    sp.className='shc '+(SHC[h]||'');sp.textContent=star+h;cont.appendChild(sp);
+  }
+}
+
+/* Show intro text when switching tabs */
+function showModeIntro(mode){
+  const y=curY();
+  const {gan,zhi}=ganZhi(y);
+  const intros={
+    base:{
+      ico:'⭐', badge:'本命盤', badgeCls:'badge-base',
+      title:'本命盤 — 體（DNA · 一生格局）',
+      sub:'定性分析：個性骨架、先天能量、人際緣分',
+      body:`本命盤是三盤之「體」，代表你先天帶來的命運藍圖——你的個性底色、才能潛力、與家人的緣分深淺、一生財富的格局高低。\n\n【核心原則】本命宮位是永久的標籤，不會因為時間而改變。它告訴我們「事情會不會發生」，也就是命中有沒有這個因緣。\n\n【疊宮公式】本命為體：先看本命宮位有無此類事件的能量，若連本命都無，則大限、流年再強也難成真；若本命已具備，則等待大限、流年引動即可應驗。\n\n【如何使用】點擊任一宮格，或點上方宮位導覽，查看本命宮位的星曜組合與一生解說。`
+    },
+    decade:{
+      ico:'⏳', badge:'大限盤', badgeCls:'badge-decade',
+      title:'大限盤 — 用（氣候 · 十年趨勢）',
+      sub:'定時分析：十年環境氣候、重心位移、黃金時機',
+      body:`大限盤是三盤之「用」，每十年命宮移動一次，代表這十年的人生「氣候環境」——是雨水充沛的豐收期，還是烈日乾旱的蟄伏期。\n\n【核心原則】大限決定「事情何時發展」，是執行與開花的時間視窗。即使本命條件再好，若大限不配合，也難以成事；反之，大限順勢時，任何佈局都事半功倍。\n\n【四化連動】大限四化會「啟動」本命宮位的能量。例如大限化祿落入本命財帛宮，這十年財運可觀；若大限化忌入本命命宮，則這十年個人狀態起伏較大。\n\n【如何使用】點擊任一宮格的橘色年齡標籤，查看該大限十年的運勢分析與趨勢判斷。`
+    },
+    annual:{
+      ico:'📅', badge:`${gan}年 流年`, badgeCls:'badge-annual',
+      title:`流年盤 — 應（${gan}${zhi}年 · 當年事件）`,
+      sub:`定量分析：${y}年具體事件、四化引動、今年應驗`,
+      body:`流年盤是三盤之「應」，每年地支轉動一次，直接反映這一年「外部環境的整體影響」與「具體事件的爆發時機」。\n\n【核心原則】流年是那一聲引爆的「雷響」。它告訴我們「事情何時結束/結果」，也就是今年究竟會不會發生。\n\n【疊宮爆發原理】當「流年化忌」疊到「大限化忌」且又疊到「本命化忌」時，此宮代表的事件在今年會強烈爆發。三忌疊宮，是紫微斗數中最嚴重的警示訊號。\n\n【四化引動】${gan}年四化如右下角所示，凡本命或大限中有此四顆星的宮位，今年都受到引動，吉凶根據祿/權/科/忌而定。\n\n【如何使用】點擊任一宮格，查看該宮位在${gan}年的具體事件分析與行動建議。橘色高亮的宮格為${y}年流年命宮所在。`
+    }
+  };
+  const cfg=intros[mode]||intros.base;
+  setEx({...cfg, tags:[], stars:null, age:null});
 }
 
 /* ========== PALACE NAV ========== */
@@ -910,21 +1200,14 @@ function buildPalaceNav(){
     btn.dataset.palace=name;
     btn.textContent=(info?info.icon:'')+' '+name;
     btn.onclick=()=>{
-      // find matching palace and trigger explain
       const p=PALACES.find(x=>x.n===name);
       if(p){
-        // deselect all cells, then show info
         document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
-        // find cell by palace name and select
         document.querySelectorAll('.cell').forEach(c=>{
-          if(c.dataset.n===name){
-            c.classList.add('sel');
-            c.scrollIntoView({behavior:'smooth',block:'nearest'});
-          }
+          if(c.dataset.n===name) c.classList.add('sel');
         });
         document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.toggle('active',b===btn));
-        const info2=PALACE_INFO[name];
-        if(info2) setEx(info2.icon,info2.title,info2.sub,info2.body,info2.tags,p.s.map(s=>s.v).join('、'),p.a);
+        renderExplain(p, currentMode);
       }
     };
     nav.appendChild(btn);
@@ -1013,9 +1296,19 @@ function curY(){return parseInt(document.getElementById('selYear').value)||new D
 window.switchTab=function(el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
+  currentMode=el.dataset.m;
+  // clear cell selection
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.pnav-btn').forEach(b=>b.classList.remove('active'));
   const yrBar=document.getElementById('yrBar');
-  if(el.dataset.m==='annual'){yrBar.classList.add('show');applyAnnual()}
-  else{yrBar.classList.remove('show');clearAnnual()}
+  if(currentMode==='annual'){
+    yrBar.classList.add('show');
+    applyAnnual();
+  } else {
+    yrBar.classList.remove('show');
+    clearAnnual();
+    showModeIntro(currentMode);
+  }
 };
 
 /* ========== SUBMIT ========== */
@@ -1065,6 +1358,7 @@ btnTh.onclick=()=>setTheme(!document.body.classList.contains('dark'));
   liveName(nm);
   const cd=document.getElementById('cDet');if(cd)cd.textContent='命盤 · '+(gv==='m'?'陽男':'陰女');
   setFormula(gv);updateSH(curY());renderH();
+  showModeIntro('base');
 
   document.getElementById('iName').addEventListener('input',e=>liveName(e.target.value));
 })();
